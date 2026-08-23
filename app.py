@@ -1,13 +1,14 @@
 import streamlit as st
-import streamlit.components.v1 as components
-
 from pathlib import Path
 from datetime import datetime
 import json
 import uuid
 import re
 
-# Optional dependencies
+# =========================================================
+# OPTIONAL COMPONENTS
+# =========================================================
+
 try:
     from streamlit_geolocation import streamlit_geolocation
     GEO_AVAILABLE = True
@@ -15,7 +16,11 @@ except Exception:
     GEO_AVAILABLE = False
 
 try:
-    from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
+    from streamlit_webrtc import (
+        webrtc_streamer,
+        WebRtcMode,
+        RTCConfiguration
+    )
     VIDEO_AVAILABLE = True
 except Exception:
     VIDEO_AVAILABLE = False
@@ -34,7 +39,7 @@ st.set_page_config(
 
 
 # =========================================================
-# CONSTANTS
+# STORAGE
 # =========================================================
 
 BASE_DIR = Path("safeher_evidence")
@@ -42,16 +47,41 @@ BASE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # =========================================================
-# CUSTOM CSS
+# CSS
 # =========================================================
 
 st.markdown(
     """
     <style>
 
+    /* ---------- MAIN APP ---------- */
+
     .stApp {
-        background: linear-gradient(135deg, #fff5fb 0%, #fdf7ff 45%, #f7f2ff 100%);
+        background: linear-gradient(
+            135deg,
+            #fff5fb 0%,
+            #fdf7ff 50%,
+            #f7f2ff 100%
+        );
+        color: #333333 !important;
     }
+
+    /* Force normal Streamlit text to be dark */
+    .stApp p,
+    .stApp span,
+    .stApp label,
+    .stApp small,
+    .stApp div,
+    .stApp h1,
+    .stApp h2,
+    .stApp h3,
+    .stApp h4,
+    .stApp h5,
+    .stApp h6 {
+        color: #333333 !important;
+    }
+
+    /* ---------- HERO ---------- */
 
     .hero {
         background: linear-gradient(
@@ -63,9 +93,13 @@ st.markdown(
         padding: 30px;
         border-radius: 25px;
         text-align: center;
-        color: white;
         margin-bottom: 25px;
         box-shadow: 0 10px 30px rgba(190, 80, 160, 0.18);
+    }
+
+    .hero h1,
+    .hero p {
+        color: #ffffff !important;
     }
 
     .hero h1 {
@@ -78,35 +112,118 @@ st.markdown(
         margin: 0;
     }
 
+    /* ---------- INCIDENT ---------- */
+
     .incident {
         background: #fff0f6;
         border: 2px solid #ff8fbd;
         border-radius: 18px;
         padding: 15px;
         margin-bottom: 20px;
+        color: #333333 !important;
     }
 
+    .incident * {
+        color: #333333 !important;
+    }
+
+    /* ---------- CARDS ---------- */
+
     .card {
-        background: white;
+        background: #ffffff;
         padding: 22px;
         border-radius: 20px;
         margin: 15px 0;
         box-shadow: 0 5px 18px rgba(130, 80, 140, 0.08);
+        color: #333333 !important;
     }
 
+    .card * {
+        color: #333333 !important;
+    }
+
+    /* ---------- EVIDENCE ---------- */
+
     .evidence {
-        background: white;
+        background: #ffffff;
         border-left: 5px solid #ff69a6;
         border-radius: 14px;
         padding: 14px;
         margin: 10px 0;
         box-shadow: 0 4px 14px rgba(120, 70, 130, 0.08);
+        color: #333333 !important;
     }
+
+    .evidence * {
+        color: #333333 !important;
+    }
+
+    /* ---------- SMALL CAMERA ---------- */
 
     .small-camera {
         max-width: 430px;
         margin-left: auto;
         margin-right: auto;
+    }
+
+    /* ---------- TEXT INPUTS ---------- */
+
+    .stTextInput input,
+    .stTextArea textarea,
+    .stNumberInput input {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #dddddd !important;
+    }
+
+    .stTextArea textarea::placeholder,
+    .stTextInput input::placeholder {
+        color: #777777 !important;
+    }
+
+    /* ---------- SELECTBOX / INPUT TEXT ---------- */
+
+    [data-baseweb="select"] {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+    [data-baseweb="select"] * {
+        color: #333333 !important;
+    }
+
+    /* ---------- BUTTON TEXT ---------- */
+
+    .stButton button {
+        font-weight: 700 !important;
+    }
+
+    /* ---------- ALERTS ---------- */
+
+    [data-testid="stAlert"] p,
+    [data-testid="stAlert"] span {
+        color: #333333 !important;
+    }
+
+    /* ---------- CAPTIONS ---------- */
+
+    .stCaption,
+    [data-testid="stCaptionContainer"] {
+        color: #555555 !important;
+    }
+
+    /* ---------- METRICS ---------- */
+
+    [data-testid="stMetricLabel"],
+    [data-testid="stMetricValue"],
+    [data-testid="stMetricDelta"] {
+        color: #333333 !important;
+    }
+
+    /* ---------- DIVIDERS ---------- */
+
+    hr {
+        border-color: #ead7e6 !important;
     }
 
     </style>
@@ -119,19 +236,26 @@ st.markdown(
 # SESSION STATE
 # =========================================================
 
-defaults = {
-    "incident_active": False,
-    "incident_id": None,
-    "incident_started": None,
-    "sos_message": "",
-    "evidence": [],
-    "ai_result": None,
-    "location_requested": False,
-}
+if "incident_active" not in st.session_state:
+    st.session_state.incident_active = False
 
-for key, value in defaults.items():
-    if key not in st.session_state:
-        st.session_state[key] = value
+if "incident_id" not in st.session_state:
+    st.session_state.incident_id = None
+
+if "incident_started" not in st.session_state:
+    st.session_state.incident_started = None
+
+if "sos_message" not in st.session_state:
+    st.session_state.sos_message = ""
+
+if "evidence" not in st.session_state:
+    st.session_state.evidence = []
+
+if "ai_result" not in st.session_state:
+    st.session_state.ai_result = None
+
+if "location_requested" not in st.session_state:
+    st.session_state.location_requested = False
 
 
 # =========================================================
@@ -142,57 +266,78 @@ def now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def safe_filename(text):
-    return re.sub(r"[^A-Za-z0-9_.-]", "_", str(text))
+def safe_filename(value):
+    return re.sub(
+        r"[^A-Za-z0-9_.-]",
+        "_",
+        str(value)
+    )
 
 
-def incident_folder():
+def folder():
     if not st.session_state.incident_id:
         return BASE_DIR
 
-    folder = BASE_DIR / safe_filename(
-        st.session_state.incident_id
+    incident_folder = (
+        BASE_DIR
+        / safe_filename(st.session_state.incident_id)
     )
 
-    folder.mkdir(parents=True, exist_ok=True)
-    return folder
+    incident_folder.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    return incident_folder
 
 
 def save_manifest():
+
     if not st.session_state.incident_id:
         return
-
-    folder = incident_folder()
 
     manifest = {
         "incident_id": st.session_state.incident_id,
         "incident_started": st.session_state.incident_started,
         "last_updated": now(),
-        "evidence": st.session_state.evidence,
+        "evidence": st.session_state.evidence
     }
 
-    manifest_file = folder / "evidence_manifest.json"
+    manifest_file = (
+        folder()
+        / "evidence_manifest.json"
+    )
 
     manifest_file.write_text(
-        json.dumps(manifest, indent=2),
+        json.dumps(
+            manifest,
+            indent=2
+        ),
         encoding="utf-8"
     )
 
 
-def add_evidence(evidence_type, file_path, description):
+def add_evidence(
+    evidence_type,
+    file_path,
+    description
+):
+
     item = {
         "type": evidence_type,
         "timestamp": now(),
         "incident_id": st.session_state.incident_id,
         "description": description,
-        "file": str(file_path),
+        "file": str(file_path)
     }
 
     st.session_state.evidence.append(item)
+
     save_manifest()
 
 
 def start_incident():
+
     incident_id = (
         "SH-"
         + datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -210,64 +355,72 @@ def start_incident():
     st.session_state.location_requested = False
     st.session_state.ai_result = None
 
-    incident_folder()
+    folder()
     save_manifest()
 
 
 def end_incident():
+
     st.session_state.incident_active = False
+
     st.session_state.sos_message = (
         "Incident ended. Evidence remains saved."
     )
+
     save_manifest()
 
 
-def classify_situation(description):
+def classify(description):
+
     text = description.lower()
 
-    high_words = [
+    high_risk_words = [
         "attack",
         "attacking",
-        "kidnap",
-        "kidnapping",
         "weapon",
         "knife",
         "gun",
+        "kidnap",
+        "kidnapping",
+        "abduction",
+        "assault",
         "threat",
         "threatening",
         "following me",
-        "following",
-        "abduction",
         "help me",
         "danger",
-        "dangerous",
-        "assault",
+        "dangerous"
     ]
 
-    medium_words = [
+    medium_risk_words = [
         "stalking",
-        "scared",
+        "stalker",
         "unsafe",
+        "scared",
         "suspicious",
         "harassment",
         "harassing",
         "stranger",
-        "following",
         "uncomfortable",
+        "following"
     ]
 
-    for word in high_words:
+    for word in high_risk_words:
+
         if word in text:
+
             return (
                 "HIGH RISK",
                 "The description contains indicators of a potentially immediate safety threat."
             )
 
-    for word in medium_words:
+    for word in medium_risk_words:
+
         if word in text:
+
             return (
                 "MEDIUM RISK",
-                "The description suggests a potentially unsafe situation. Consider contacting someone you trust or emergency services."
+                "The description suggests a potentially unsafe situation."
             )
 
     return (
@@ -277,99 +430,133 @@ def classify_situation(description):
 
 
 # =========================================================
-# RESPONDER MODE
+# RESPONDER DASHBOARD
 # =========================================================
 
-query_params = st.query_params
-
-if query_params.get("mode") == "responder":
+if st.query_params.get("mode") == "responder":
 
     st.markdown(
         """
         <div class="hero">
-            <h1>🛡️ SafeHer AI Responder Dashboard</h1>
-            <p>Authorized incident evidence view</p>
+            <h1>🛡️ SafeHer AI</h1>
+            <p>Authorized Responder Dashboard</p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    responder_key = query_params.get("key", "")
+    responder_key = st.query_params.get(
+        "key",
+        ""
+    )
 
     if responder_key != "safeher-demo":
-        st.error("🔐 Unauthorized responder access.")
+
+        st.error(
+            "🔐 Unauthorized responder access."
+        )
+
         st.stop()
 
-    st.success("✅ Responder demonstration access granted.")
+    st.success(
+        "✅ Responder demonstration access granted."
+    )
 
-    folders = sorted(
+    incident_folders = sorted(
         [
-            x for x in BASE_DIR.iterdir()
-            if x.is_dir()
+            item
+            for item in BASE_DIR.iterdir()
+            if item.is_dir()
         ],
         reverse=True
     )
 
-    if not folders:
-        st.info("No incident evidence has been recorded yet.")
+    if not incident_folders:
+
+        st.info(
+            "No incident evidence has been recorded yet."
+        )
+
     else:
-        st.subheader("📁 Recorded Incidents")
 
-        for incident_dir in folders:
+        st.subheader(
+            "📁 Recorded Incidents"
+        )
 
-            manifest = incident_dir / "evidence_manifest.json"
+        for incident_folder in incident_folders:
 
-            if manifest.exists():
+            manifest_file = (
+                incident_folder
+                / "evidence_manifest.json"
+            )
 
-                try:
-                    data = json.loads(
-                        manifest.read_text(
-                            encoding="utf-8"
+            if not manifest_file.exists():
+                continue
+
+            try:
+
+                data = json.loads(
+                    manifest_file.read_text(
+                        encoding="utf-8"
+                    )
+                )
+
+            except Exception:
+
+                data = {}
+
+            incident_name = data.get(
+                "incident_id",
+                incident_folder.name
+            )
+
+            with st.expander(
+                f"🚨 {incident_name}"
+            ):
+
+                st.write(
+                    "🕒 Started: "
+                    + str(
+                        data.get(
+                            "incident_started",
+                            "Unknown"
                         )
                     )
-                except Exception:
-                    data = {}
+                )
 
-                with st.expander(
-                    f"🚨 {data.get('incident_id', incident_dir.name)}"
-                ):
+                evidence = data.get(
+                    "evidence",
+                    []
+                )
 
-                    st.write(
-                        f"🕒 Started: "
-                        f"{data.get('incident_started', 'Unknown')}"
+                if not evidence:
+
+                    st.info(
+                        "No evidence recorded."
                     )
 
-                    evidence = data.get(
-                        "evidence",
-                        []
-                    )
+                else:
 
-                    if evidence:
+                    for item in evidence:
 
-                        for item in evidence:
-                            st.markdown(
-                                f"""
-                                <div class="evidence">
-                                    <b>#{item.get('type', 'Evidence')}</b><br>
-                                    🕒 {item.get('timestamp', '')}<br>
-                                    🆔 {item.get('incident_id', '')}<br>
-                                    📝 {item.get('description', '')}<br>
-                                    📁 {item.get('file', '')}
-                                </div>
-                                """,
-                                unsafe_allow_html=True
-                            )
-
-                    else:
-                        st.info(
-                            "No evidence has been recorded for this incident."
+                        st.markdown(
+                            f"""
+                            <div class="evidence">
+                                <b>#{item.get("type", "Evidence")}</b><br>
+                                🕒 {item.get("timestamp", "")}<br>
+                                🆔 {item.get("incident_id", "")}<br>
+                                📝 {item.get("description", "")}<br>
+                                📁 {item.get("file", "")}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
                         )
 
     st.stop()
 
 
 # =========================================================
-# MAIN HEADER
+# HERO
 # =========================================================
 
 st.markdown(
@@ -404,6 +591,7 @@ if st.session_state.incident_active:
     )
 
 else:
+
     st.success(
         "🟢 SafeHer is ready. Press SOS if you feel unsafe."
     )
@@ -419,7 +607,7 @@ st.markdown(
         <h2>🚨 Emergency SOS</h2>
         <p>
             Creates a unique incident and enables emergency
-            evidence collection.
+            evidence capture.
         </p>
     </div>
     """,
@@ -430,7 +618,7 @@ if st.button(
     "🚨 ACTIVATE SOS",
     type="primary",
     use_container_width=True,
-    key="activate_sos_button"
+    key="activate_sos"
 ):
 
     if not st.session_state.incident_active:
@@ -457,23 +645,27 @@ if st.session_state.sos_message:
 # EMERGENCY EVIDENCE
 # =========================================================
 
-st.header("📸 Emergency Evidence Capture")
+st.header(
+    "📸 Emergency Evidence Capture"
+)
 
 if not st.session_state.incident_active:
 
     st.info(
-        "Activate SOS first to enable emergency evidence capture."
+        "Activate SOS first to enable evidence capture."
     )
 
 else:
 
-    evidence_path = incident_folder()
+    evidence_folder = folder()
 
     # =====================================================
     # SNAPSHOT
     # =====================================================
 
-    st.subheader("📷 Emergency Snapshot")
+    st.subheader(
+        "📷 Emergency Snapshot"
+    )
 
     st.markdown(
         '<div class="small-camera">',
@@ -482,45 +674,38 @@ else:
 
     snapshot = st.camera_input(
         "Take emergency snapshot",
-        key="emergency_snapshot_camera"
+        key="safeher_snapshot"
     )
 
     st.markdown(
-        '</div>',
+        "</div>",
         unsafe_allow_html=True
     )
 
     if snapshot is not None:
 
         snapshot_file = (
-            evidence_path
-            / f"{st.session_state.incident_id}"
-              f"_snapshot_"
-              f"{datetime.now():%Y%m%d_%H%M%S}.jpg"
+            evidence_folder
+            / (
+                f"{st.session_state.incident_id}"
+                f"_snapshot_"
+                f"{datetime.now():%Y%m%d_%H%M%S}.jpg"
+            )
         )
 
         snapshot_file.write_bytes(
             snapshot.getvalue()
         )
 
-        already_saved = any(
-            item["type"] == "SNAPSHOT"
-            and item["file"] == str(snapshot_file)
-            for item in st.session_state.evidence
+        add_evidence(
+            "SNAPSHOT",
+            snapshot_file,
+            "Camera snapshot captured during active incident."
         )
 
-        if not already_saved:
-
-            add_evidence(
-                "SNAPSHOT",
-                snapshot_file,
-                "Camera snapshot captured during active incident."
-            )
-
-            st.success(
-                "✅ Snapshot saved successfully."
-            )
-
+        st.success(
+            "✅ Snapshot saved successfully."
+        )
 
     # =====================================================
     # LOCATION
@@ -528,18 +713,18 @@ else:
 
     st.divider()
 
-    st.subheader("📍 Emergency Location")
-
-    if "location_requested" not in st.session_state:
-        st.session_state.location_requested = False
+    st.subheader(
+        "📍 Emergency Location"
+    )
 
     if st.button(
         "📍 CAPTURE MY LOCATION",
         use_container_width=True,
-        key="capture_location_button"
+        key="capture_location"
     ):
 
         st.session_state.location_requested = True
+
         st.rerun()
 
 
@@ -547,9 +732,7 @@ else:
 
         if GEO_AVAILABLE:
 
-            location = streamlit_geolocation(
-                key="safeher_location_component"
-            )
+            location = streamlit_geolocation()
 
             if (
                 location
@@ -562,13 +745,15 @@ else:
                     "timestamp": now(),
                     "latitude": location.get("latitude"),
                     "longitude": location.get("longitude"),
-                    "accuracy": location.get("accuracy"),
+                    "accuracy": location.get("accuracy")
                 }
 
                 location_file = (
-                    evidence_path
-                    / f"{st.session_state.incident_id}"
-                      "_location.json"
+                    evidence_folder
+                    / (
+                        f"{st.session_state.incident_id}"
+                        "_location.json"
+                    )
                 )
 
                 location_file.write_text(
@@ -579,12 +764,10 @@ else:
                     encoding="utf-8"
                 )
 
-                already_has_location = any(
+                if not any(
                     item["type"] == "LOCATION"
                     for item in st.session_state.evidence
-                )
-
-                if not already_has_location:
+                ):
 
                     add_evidence(
                         "LOCATION",
@@ -603,22 +786,31 @@ else:
                 col1, col2 = st.columns(2)
 
                 with col1:
+
                     st.metric(
                         "Latitude",
-                        str(location_data["latitude"])
+                        str(
+                            location_data["latitude"]
+                        )
                     )
 
                 with col2:
+
                     st.metric(
                         "Longitude",
-                        str(location_data["longitude"])
+                        str(
+                            location_data["longitude"]
+                        )
                     )
 
                 if location_data.get("accuracy") is not None:
 
                     st.caption(
-                        f"🎯 Accuracy: "
-                        f"{location_data['accuracy']} meters"
+                        "🎯 Accuracy: "
+                        + str(
+                            location_data["accuracy"]
+                        )
+                        + " meters"
                     )
 
                 try:
@@ -630,25 +822,28 @@ else:
                             ],
                             "longitude": [
                                 location_data["longitude"]
-                            ],
+                            ]
                         }
                     )
 
                 except Exception:
+
                     pass
 
             else:
 
                 st.info(
-                    "📍 Please allow location permission in your browser. "
-                    "Then press **CAPTURE MY LOCATION** again."
+                    "📍 Please allow location permission "
+                    "in your browser, then click "
+                    "**CAPTURE MY LOCATION** again."
                 )
 
         else:
 
             st.error(
                 "Location component is unavailable. "
-                "Make sure `streamlit-geolocation` is in requirements.txt."
+                "Make sure `streamlit-geolocation` "
+                "is in requirements.txt."
             )
 
 
@@ -658,12 +853,15 @@ else:
 
     st.divider()
 
-    st.subheader("🎥 Emergency Video Capture")
+    st.subheader(
+        "🎥 Emergency Video Capture"
+    )
 
     if VIDEO_AVAILABLE:
 
         st.info(
-            "🎥 Click START below to activate the emergency camera."
+            "🎥 Click START below to activate "
+            "the emergency camera."
         )
 
         rtc_config = RTCConfiguration(
@@ -678,10 +876,12 @@ else:
             }
         )
 
-        video_context = webrtc_streamer(
+        video = webrtc_streamer(
             key=(
                 "safeher_video_"
-                + str(st.session_state.incident_id)
+                + str(
+                    st.session_state.incident_id
+                )
             ),
             mode=WebRtcMode.SENDRECV,
             rtc_configuration=rtc_config,
@@ -693,7 +893,7 @@ else:
             media_toggle_controls=True
         )
 
-        if video_context.state.playing:
+        if video.state.playing:
 
             st.success(
                 "🔴 Emergency camera is ACTIVE."
@@ -714,17 +914,20 @@ else:
 
         st.error(
             "Video component unavailable. "
-            "Check `streamlit-webrtc` and `av` in requirements.txt."
+            "Check `streamlit-webrtc` and `av` "
+            "in requirements.txt."
         )
 
 
 # =========================================================
-# EVIDENCE LIST
+# EVIDENCE CAPTURED
 # =========================================================
 
 st.divider()
 
-st.header("🛡️ Evidence Captured")
+st.header(
+    "🛡️ Evidence Captured"
+)
 
 if not st.session_state.evidence:
 
@@ -734,7 +937,7 @@ if not st.session_state.evidence:
 
 else:
 
-    for index, item in enumerate(
+    for number, item in enumerate(
         reversed(st.session_state.evidence),
         1
     ):
@@ -742,7 +945,7 @@ else:
         st.markdown(
             f"""
             <div class="evidence">
-                <b>#{index} {item["type"]}</b><br>
+                <b>#{number} {item["type"]}</b><br>
                 🕒 {item["timestamp"]}<br>
                 🆔 {item["incident_id"]}<br>
                 📝 {item["description"]}<br>
@@ -757,7 +960,9 @@ else:
 # AI SAFETY CLASSIFICATION
 # =========================================================
 
-st.header("🤖 AI Safety Classification")
+st.header(
+    "🤖 AI Safety Classification"
+)
 
 description = st.text_area(
     "Describe the situation",
@@ -770,12 +975,12 @@ description = st.text_area(
 
 if st.button(
     "🤖 Analyze Safety Situation",
-    key="analyze_safety_button"
+    key="analyze_safety"
 ):
 
     if description.strip():
 
-        st.session_state.ai_result = classify_situation(
+        st.session_state.ai_result = classify(
             description
         )
 
@@ -815,23 +1020,26 @@ if st.session_state.ai_result:
 # INCIDENT CONTROLS
 # =========================================================
 
-st.header("⚙️ Incident Controls")
+st.header(
+    "⚙️ Incident Controls"
+)
 
 if st.session_state.incident_active:
 
     if st.button(
         "🛑 End Incident",
-        key="end_incident_button"
+        key="end_incident"
     ):
 
         end_incident()
+
         st.rerun()
 
 
 if st.session_state.incident_id:
 
     manifest_file = (
-        incident_folder()
+        folder()
         / "evidence_manifest.json"
     )
 
@@ -839,14 +1047,33 @@ if st.session_state.incident_id:
 
         st.download_button(
             "⬇️ Download Incident Manifest",
-            data=manifest_file.read_bytes(),
+            manifest_file.read_bytes(),
             file_name=(
                 f"{st.session_state.incident_id}"
                 "_manifest.json"
             ),
             mime="application/json",
-            key="download_manifest_button"
+            key="download_manifest"
         )
+
+
+# =========================================================
+# RESPONDER LINK
+# =========================================================
+
+st.divider()
+
+st.subheader(
+    "🛡️ Responder Access"
+)
+
+st.caption(
+    "Demo responder dashboard:"
+)
+
+st.code(
+    "?mode=responder&key=safeher-demo"
+)
 
 
 # =========================================================
@@ -856,5 +1083,5 @@ if st.session_state.incident_id:
 st.divider()
 
 st.caption(
-    "🌸 SafeHer AI — Safety technology demonstration."
+    "🌸 SafeHer AI — Personal safety technology demonstration."
 )
