@@ -1,0 +1,157 @@
+import os, json, uuid
+from pathlib import Path
+from datetime import datetime
+import streamlit as st
+
+APP_DIR = Path(__file__).resolve().parent / "safeher_data"
+EVIDENCE_DIR = APP_DIR / "evidence"
+EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+
+try:
+    from streamlit_geolocation import streamlit_geolocation
+    GEO_AVAILABLE = True
+except Exception:
+    GEO_AVAILABLE = False
+
+try:
+    from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
+    VIDEO_AVAILABLE = True
+except Exception:
+    VIDEO_AVAILABLE = False
+
+st.set_page_config(page_title="SafeHer AI", page_icon="🌸", layout="wide")
+
+st.markdown("""
+<style>
+.stApp{background:linear-gradient(135deg,#fff8fc,#f8f3ff,#eef7ff)}
+.block-container{max-width:1250px;padding-top:25px}
+.hero{padding:30px;border-radius:28px;background:linear-gradient(135deg,#ff5f9e,#a66cff);color:white;box-shadow:0 12px 35px rgba(150,80,160,.18);margin-bottom:22px}
+.hero h1{margin:0;font-size:44px}.hero p{font-size:18px}
+.card{background:rgba(255,255,255,.9);border:1px solid #eadcf0;border-radius:20px;padding:20px;margin-bottom:16px}
+.incident{background:#fff0f4;border:2px solid #ff8cad;border-radius:18px;padding:16px;margin-bottom:18px}
+.evidence{background:white;border-left:5px solid #b16cff;border-radius:14px;padding:14px;margin-bottom:12px}
+.footer{text-align:center;color:#888;padding:30px}
+</style>
+""", unsafe_allow_html=True)
+
+def now(): return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+def folder():
+    if not st.session_state.get("incident_id"): return None
+    p=EVIDENCE_DIR/st.session_state.incident_id; p.mkdir(parents=True,exist_ok=True); return p
+
+def save_manifest():
+    p=folder()
+    if p: (p/"evidence_manifest.json").write_text(json.dumps(st.session_state.evidence,indent=2),encoding="utf-8")
+
+def add_evidence(kind,path,description):
+    st.session_state.evidence.append({"incident_id":st.session_state.incident_id,"type":kind,"file":str(path),"timestamp":now(),"description":description})
+    save_manifest()
+
+def start_incident():
+    iid=f"SH-{datetime.now():%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:6].upper()}"
+    st.session_state.incident_id=iid; st.session_state.incident_active=True; st.session_state.incident_started=now(); st.session_state.evidence=[]
+    p=folder(); (p/"incident_metadata.json").write_text(json.dumps({"incident_id":iid,"started":st.session_state.incident_started},indent=2),encoding="utf-8")
+
+def classify(text):
+    t=(text or "").lower(); high=["attack","follow","following","stalk","stalking","threat","danger","help","emergency","harass","kidnap","chase","abuse"]; med=["alone","suspicious","scared","unsafe","stranger"]
+    if any(x in t for x in high): return "HIGH RISK","Immediate safety response is recommended."
+    if any(x in t for x in med): return "MEDIUM RISK","Stay alert and consider activating SOS."
+    return "LOW RISK","No strong emergency indicators detected."
+
+for k,v in {"incident_active":False,"incident_id":None,"incident_started":None,"evidence":[],"ai_result":None,"sos_message":""}.items():
+    st.session_state.setdefault(k,v)
+
+# Responder mode
+if st.query_params.get("mode","") == "responder":
+    st.markdown('<div class="hero"><h1>👮 SafeHer AI</h1><p>Authorized Responder Dashboard</p></div>',unsafe_allow_html=True)
+    key=st.text_input("Responder Key",type="password")
+    if key != "safeher-demo": st.info("Enter the authorized responder key."); st.stop()
+    incidents=sorted([p for p in EVIDENCE_DIR.iterdir() if p.is_dir()],key=lambda p:p.stat().st_mtime,reverse=True)
+    if not incidents: st.info("No incidents recorded yet."); st.stop()
+    selected=st.selectbox("Select Incident",incidents,format_func=lambda p:p.name)
+    st.markdown(f'<div class="incident"><b>Incident ID:</b> {selected.name}</div>',unsafe_allow_html=True)
+    mf=selected/"evidence_manifest.json"
+    if mf.exists():
+        for item in json.loads(mf.read_text(encoding="utf-8")):
+            st.markdown(f'<div class="evidence"><b>{item["type"]}</b><br>🕒 {item["timestamp"]}<br>📝 {item["description"]}</div>',unsafe_allow_html=True)
+            fp=Path(item["file"])
+            if fp.exists():
+                if fp.suffix.lower() in {".jpg",".jpeg",".png",".webp"}: st.image(str(fp),use_container_width=True)
+                else: st.download_button("⬇️ Download "+fp.name,fp.read_bytes(),file_name=fp.name,key="dl_"+uuid.uuid4().hex)
+    st.stop()
+
+st.markdown('<div class="hero"><h1>🌸 SafeHer AI</h1><p>AI-assisted personal safety, emergency evidence capture and responder support</p></div>',unsafe_allow_html=True)
+
+if st.session_state.incident_active:
+    st.markdown(f'<div class="incident">🚨 <b>INCIDENT ACTIVE</b><br>🆔 {st.session_state.incident_id}<br>🕒 {st.session_state.incident_started}</div>',unsafe_allow_html=True)
+else: st.success("🟢 SafeHer is ready. Press SOS if you feel unsafe.")
+
+st.markdown('<div class="card"><h2>🚨 Emergency SOS</h2><p>Creates a unique incident and enables evidence capture.</p></div>',unsafe_allow_html=True)
+if st.button("🚨 ACTIVATE SOS",type="primary",use_container_width=True):
+    if not st.session_state.incident_active: start_incident(); st.session_state.sos_message="SOS ACTIVATED — evidence collection is active."; st.rerun()
+    else: st.warning("An incident is already active.")
+if st.session_state.sos_message: st.warning(st.session_state.sos_message)
+
+st.header("📸 Emergency Evidence Capture")
+if not st.session_state.incident_active: st.info("Activate SOS first.")
+else:
+    p=folder(); c1,c2=st.columns(2)
+    with c1:
+        st.subheader("📷 Snapshot")
+        snap=st.camera_input("Take emergency snapshot",key="camera")
+        if snap is not None:
+            fp=p/f"{st.session_state.incident_id}_snapshot_{datetime.now():%Y%m%d_%H%M%S}.jpg"; fp.write_bytes(snap.getvalue()); add_evidence("SNAPSHOT",fp,"Camera snapshot captured during active incident."); st.success("✅ Snapshot saved.")
+    with c2:
+        st.subheader("📍 Live Location")
+        if GEO_AVAILABLE:
+            loc=streamlit_geolocation()
+            if loc and loc.get("latitude") is not None:
+                data={"incident_id":st.session_state.incident_id,"timestamp":now(),"latitude":loc.get("latitude"),"longitude":loc.get("longitude"),"accuracy":loc.get("accuracy")}
+                fp=p/f"{st.session_state.incident_id}_location.json"; fp.write_text(json.dumps(data,indent=2),encoding="utf-8")
+                if not any(x["type"]=="LOCATION" for x in st.session_state.evidence): add_evidence("LOCATION",fp,f"GPS: {data['latitude']}, {data['longitude']}")
+                st.success("📍 Location captured."); st.write(f"Latitude: `{data['latitude']}`"); st.write(f"Longitude: `{data['longitude']}`")
+                try: st.map({"latitude":[data["latitude"]],"longitude":[data["longitude"]]})
+                except Exception: pass
+            else: st.info("Allow browser location permission, then use the location control.")
+        else: st.warning("Location component unavailable. Install streamlit-geolocation.")
+    st.divider(); st.header("🎥 Emergency Video Capture")
+    if VIDEO_AVAILABLE:
+        rtc=RTCConfiguration({"iceServers":[{"urls":["stun:stun.l.google.com:19302"]}]})
+        webrtc_streamer(key="safeher-"+st.session_state.incident_id,mode=WebRtcMode.SENDRECV,rtc_configuration=rtc,media_stream_constraints={"video":True,"audio":True},async_processing=True)
+        st.info("Allow camera/microphone permission when the browser asks. The live stream is active during the incident.")
+    else: st.warning("Video component unavailable. Install streamlit-webrtc and av.")
+
+st.header("🛡️ Evidence Captured")
+if not st.session_state.evidence: st.info("No completed evidence actions yet.")
+else:
+    for i,item in enumerate(reversed(st.session_state.evidence),1): st.markdown(f'<div class="evidence"><b>#{i} {item["type"]}</b><br>🕒 {item["timestamp"]}<br>🆔 {item["incident_id"]}<br>📝 {item["description"]}<br>📁 {item["file"]}</div>',unsafe_allow_html=True)
+
+st.header("🤖 AI Safety Classification")
+desc=st.text_area("Describe the situation",placeholder="Example: Someone has been following me for the last 10 minutes...")
+if st.button("🤖 Analyze Safety Situation"):
+    st.session_state.ai_result=classify(desc)
+if st.session_state.ai_result:
+    risk,ex=st.session_state.ai_result
+    if risk=="HIGH RISK": st.error(f"🚨 {risk}: {ex}")
+    elif risk=="MEDIUM RISK": st.warning(f"⚠️ {risk}: {ex}")
+    else: st.success(f"🟢 {risk}: {ex}")
+
+st.header("⚙️ Incident Controls")
+if st.session_state.incident_active and st.button("🛑 End Incident"):
+    st.session_state.incident_active=False; st.session_state.sos_message="Incident ended. Evidence remains saved."; st.rerun()
+if st.session_state.incident_id:
+    mf=folder()/"evidence_manifest.json"
+    if mf.exists(): st.download_button("⬇️ Download Incident Manifest",mf.read_bytes(),file_name=f"{st.session_state.incident_id}_manifest.json",mime="application/json")
+
+with st.expander("👮 Responder Dashboard"):
+    st.write("Open the same site with `?mode=responder` and enter the demo responder key:")
+    st.code("safeher-demo")
+
+with st.expander("🔧 Technical Workflow"):
+    st.markdown("""
+**SOS → Incident ID → incident-specific folder → snapshot/location evidence → emergency camera stream → AI risk classification → responder dashboard.**
+
+This is a college prototype. Browser camera/GPS access requires user permission. Colab/local storage is temporary; production deployment should use persistent encrypted storage, real authentication, HTTPS and audit logging.
+""")
+
+st.markdown('<div class="footer">🌸 SafeHer AI • Women Safety & Emergency Evidence Prototype</div>',unsafe_allow_html=True)
