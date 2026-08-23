@@ -257,31 +257,156 @@ if st.session_state.sos_message: st.warning(st.session_state.sos_message)
 st.header("📸 Emergency Evidence Capture")
 if not st.session_state.incident_active: st.info("Activate SOS first.")
 else:
-    p=folder(); c1,c2=st.columns(2)
-    with c1:
-        st.subheader("📷 Snapshot")
-        snap=st.camera_input("Take emergency snapshot",key="camera")
-        if snap is not None:
-            fp=p/f"{st.session_state.incident_id}_snapshot_{datetime.now():%Y%m%d_%H%M%S}.jpg"; fp.write_bytes(snap.getvalue()); add_evidence("SNAPSHOT",fp,"Camera snapshot captured during active incident."); st.success("✅ Snapshot saved.")
-    with c2:
-        st.subheader("📍 Live Location")
+    p = folder()
+
+    # =========================
+    # SNAPSHOT
+    # =========================
+    st.subheader("📷 Emergency Snapshot")
+
+    snap = st.camera_input(
+        "Take emergency snapshot",
+        key="camera"
+    )
+
+    if snap is not None:
+        fp = p / f"{st.session_state.incident_id}_snapshot_{datetime.now():%Y%m%d_%H%M%S}.jpg"
+
+        fp.write_bytes(snap.getvalue())
+
+        add_evidence(
+            "SNAPSHOT",
+            fp,
+            "Camera snapshot captured during active incident."
+        )
+
+        st.success("✅ Snapshot saved successfully.")
+
+    # =========================
+    # LOCATION
+    # =========================
+    st.divider()
+
+    st.subheader("📍 Emergency Location")
+
+    if "location_requested" not in st.session_state:
+        st.session_state.location_requested = False
+
+    if st.button(
+        "📍 CAPTURE MY LOCATION",
+        use_container_width=True
+    ):
+        st.session_state.location_requested = True
+        st.rerun()
+
+    if st.session_state.location_requested:
+
         if GEO_AVAILABLE:
-            loc=streamlit_geolocation()
+
+            loc = streamlit_geolocation()
+
             if loc and loc.get("latitude") is not None:
-                data={"incident_id":st.session_state.incident_id,"timestamp":now(),"latitude":loc.get("latitude"),"longitude":loc.get("longitude"),"accuracy":loc.get("accuracy")}
-                fp=p/f"{st.session_state.incident_id}_location.json"; fp.write_text(json.dumps(data,indent=2),encoding="utf-8")
-                if not any(x["type"]=="LOCATION" for x in st.session_state.evidence): add_evidence("LOCATION",fp,f"GPS: {data['latitude']}, {data['longitude']}")
-                st.success("📍 Location captured."); st.write(f"Latitude: `{data['latitude']}`"); st.write(f"Longitude: `{data['longitude']}`")
-                try: st.map({"latitude":[data["latitude"]],"longitude":[data["longitude"]]})
-                except Exception: pass
-            else: st.info("Allow browser location permission, then use the location control.")
-        else: st.warning("Location component unavailable. Install streamlit-geolocation.")
-    st.divider(); st.header("🎥 Emergency Video Capture")
+
+                data = {
+                    "incident_id": st.session_state.incident_id,
+                    "timestamp": now(),
+                    "latitude": loc.get("latitude"),
+                    "longitude": loc.get("longitude"),
+                    "accuracy": loc.get("accuracy")
+                }
+
+                fp = p / f"{st.session_state.incident_id}_location.json"
+
+                fp.write_text(
+                    json.dumps(data, indent=2),
+                    encoding="utf-8"
+                )
+
+                if not any(
+                    x["type"] == "LOCATION"
+                    for x in st.session_state.evidence
+                ):
+                    add_evidence(
+                        "LOCATION",
+                        fp,
+                        f"GPS: {data['latitude']}, {data['longitude']}"
+                    )
+
+                st.success("✅ Location captured successfully.")
+
+                st.write(
+                    f"📍 Latitude: `{data['latitude']}`"
+                )
+
+                st.write(
+                    f"📍 Longitude: `{data['longitude']}`"
+                )
+
+                if data.get("accuracy") is not None:
+                    st.write(
+                        f"🎯 Accuracy: `{data['accuracy']} meters`"
+                    )
+
+                try:
+                    st.map({
+                        "latitude": [data["latitude"]],
+                        "longitude": [data["longitude"]]
+                    })
+                except Exception:
+                    pass
+
+            else:
+                st.info(
+                    "📍 Please allow location permission in your browser. "
+                    "After allowing it, click **CAPTURE MY LOCATION** again."
+                )
+
+        else:
+            st.error(
+                "Location component is unavailable. "
+                "Make sure `streamlit-geolocation` is in requirements.txt."
+            )
+
+    # =========================
+    # VIDEO
+    # =========================
+    st.divider()
+
+    st.header("🎥 Emergency Video Capture")
+
     if VIDEO_AVAILABLE:
-        rtc=RTCConfiguration({"iceServers":[{"urls":["stun:stun.l.google.com:19302"]}]})
-        webrtc_streamer(key="safeher-"+st.session_state.incident_id,mode=WebRtcMode.SENDRECV,rtc_configuration=rtc,media_stream_constraints={"video":True,"audio":True},async_processing=True)
-        st.info("Allow camera/microphone permission when the browser asks. The live stream is active during the incident.")
-    else: st.warning("Video component unavailable. Install streamlit-webrtc and av.")
+
+        rtc = RTCConfiguration({
+            "iceServers": [
+                {
+                    "urls": [
+                        "stun:stun.l.google.com:19302"
+                    ]
+                }
+            ]
+        })
+
+        webrtc_streamer(
+            key="safeher-" + st.session_state.incident_id,
+            mode=WebRtcMode.SENDRECV,
+            rtc_configuration=rtc,
+            media_stream_constraints={
+                "video": True,
+                "audio": True
+            },
+            async_processing=True
+        )
+
+        st.info(
+            "Allow camera/microphone permission when the browser asks. "
+            "The live stream is active during the incident."
+        )
+
+    else:
+        st.warning(
+            "Video component unavailable. "
+            "Install streamlit-webrtc and av."
+        )
 
 st.header("🛡️ Evidence Captured")
 if not st.session_state.evidence: st.info("No completed evidence actions yet.")
