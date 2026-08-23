@@ -55,48 +55,23 @@ st.markdown(
     """
     <style>
 
-    /* ========================================================
-       FORCE LIGHT COLOR SCHEME
-       ======================================================== */
-
     :root {
         color-scheme: light !important;
     }
 
-    html {
-        color-scheme: light !important;
-        background: #fff7fc !important;
-    }
-
+    html,
     body {
         background: #fff7fc !important;
         color: #333333 !important;
     }
 
-    [data-testid="stAppViewContainer"] {
-        background: #fff7fc !important;
-    }
-
-    [data-testid="stAppViewBlockContainer"] {
-        background: #fff7fc !important;
-    }
-
-    [data-testid="stMain"] {
-        background: #fff7fc !important;
-    }
-
-    .main {
-        background: #fff7fc !important;
-    }
-
+    [data-testid="stAppViewContainer"],
+    [data-testid="stMain"],
+    [data-testid="stAppViewBlockContainer"],
+    .main,
     .block-container {
         background: #fff7fc !important;
     }
-
-
-    /* ========================================================
-       NORMAL TEXT
-       ======================================================== */
 
     h1, h2, h3, h4, h5, h6 {
         color: #333333 !important;
@@ -110,7 +85,6 @@ st.markdown(
         color: #333333 !important;
     }
 
-
     /* ========================================================
        HERO
        ======================================================== */
@@ -118,8 +92,8 @@ st.markdown(
     .safeher-hero {
         background: linear-gradient(
             135deg,
-            #ff5a9f 0%,
-            #d15cff 100%
+            #ff5a9f,
+            #d15cff
         ) !important;
 
         border-radius: 25px;
@@ -133,13 +107,13 @@ st.markdown(
     }
 
     .safeher-hero h1 {
-        color: #ffffff !important;
+        color: white !important;
         font-size: 42px !important;
         margin: 0 !important;
     }
 
     .safeher-hero p {
-        color: #ffffff !important;
+        color: white !important;
         font-size: 17px !important;
         margin-top: 8px !important;
     }
@@ -155,20 +129,20 @@ st.markdown(
         border-radius: 17px !important;
         padding: 16px !important;
         margin-bottom: 20px !important;
+        color: #333333 !important;
     }
 
-    .incident-box,
     .incident-box b {
-        color: #333333 !important;
+        color: #b52f78 !important;
     }
 
 
     /* ========================================================
-       WHITE CARDS
+       CARD
        ======================================================== */
 
     .safeher-card {
-        background: #ffffff !important;
+        background: white !important;
         border: 1px solid #efd7e4 !important;
         border-radius: 18px !important;
         padding: 20px !important;
@@ -176,7 +150,7 @@ st.markdown(
 
         box-shadow:
             0 5px 18px
-            rgba(120, 60, 120, 0.07) !important;
+            rgba(120, 60, 120, 0.07);
     }
 
     .safeher-card h2,
@@ -189,16 +163,8 @@ st.markdown(
        TEXT AREA
        ======================================================== */
 
-    [data-testid="stTextArea"] {
-        background: #ffffff !important;
-    }
-
-    [data-testid="stTextArea"] label {
-        color: #333333 !important;
-    }
-
     [data-testid="stTextArea"] textarea {
-        background: #ffffff !important;
+        background: white !important;
         color: #222222 !important;
         -webkit-text-fill-color: #222222 !important;
 
@@ -214,14 +180,17 @@ st.markdown(
         opacity: 1 !important;
     }
 
+    [data-testid="stTextArea"] label {
+        color: #333333 !important;
+    }
+
 
     /* ========================================================
-       ALL NORMAL BUTTONS
+       BUTTONS
        ======================================================== */
 
     .stButton > button {
-        background: #ffffff !important;
-
+        background: white !important;
         color: #333333 !important;
         -webkit-text-fill-color: #333333 !important;
 
@@ -244,13 +213,12 @@ st.markdown(
 
     .stButton > button:hover {
         background: #fff0f7 !important;
-        color: #222222 !important;
         border-color: #ff65a5 !important;
     }
 
 
     /* ========================================================
-       PRIMARY SOS BUTTON
+       SOS BUTTON
        ======================================================== */
 
     .stButton > button[kind="primary"] {
@@ -260,16 +228,16 @@ st.markdown(
             #d35cff
         ) !important;
 
-        color: #ffffff !important;
-        -webkit-text-fill-color: #ffffff !important;
+        color: white !important;
+        -webkit-text-fill-color: white !important;
 
         border: none !important;
     }
 
     .stButton > button[kind="primary"] p,
     .stButton > button[kind="primary"] span {
-        color: #ffffff !important;
-        -webkit-text-fill-color: #ffffff !important;
+        color: white !important;
+        -webkit-text-fill-color: white !important;
     }
 
 
@@ -278,8 +246,7 @@ st.markdown(
        ======================================================== */
 
     .stDownloadButton > button {
-        background: #ffffff !important;
-
+        background: white !important;
         color: #333333 !important;
         -webkit-text-fill-color: #333333 !important;
 
@@ -296,28 +263,23 @@ st.markdown(
 
 
     /* ========================================================
-       CAMERA INPUT
+       SNAPSHOT
        ======================================================== */
 
     [data-testid="stCameraInput"] {
-        background: #ffffff !important;
-
+        background: white !important;
         border: 2px solid #ead1df !important;
         border-radius: 15px !important;
-
         padding: 8px !important;
     }
 
-    [data-testid="stCameraInput"] label {
-        color: #333333 !important;
-    }
-
+    [data-testid="stCameraInput"] label,
     [data-testid="stCameraInput"] p {
         color: #333333 !important;
     }
 
     [data-testid="stCameraInput"] button {
-        background: #ffffff !important;
+        background: white !important;
         color: #333333 !important;
         border: 2px solid #dfb8ce !important;
     }
@@ -341,7 +303,7 @@ st.markdown(
        ======================================================== */
 
     [data-testid="stMetric"] {
-        background: #ffffff !important;
+        background: white !important;
         border: 1px solid #ead1df !important;
         border-radius: 14px !important;
         padding: 10px !important;
@@ -361,30 +323,9 @@ st.markdown(
        ======================================================== */
 
     [data-testid="stExpander"] {
-        background: #ffffff !important;
+        background: white !important;
         border: 2px solid #ead1df !important;
         border-radius: 14px !important;
-    }
-
-    [data-testid="stExpander"] summary {
-        color: #333333 !important;
-    }
-
-    [data-testid="stExpander"] p {
-        color: #333333 !important;
-    }
-
-
-    /* ========================================================
-       CAPTIONS
-       ======================================================== */
-
-    [data-testid="stCaptionContainer"] {
-        color: #666666 !important;
-    }
-
-    [data-testid="stCaptionContainer"] p {
-        color: #666666 !important;
     }
 
 
@@ -393,7 +334,7 @@ st.markdown(
        ======================================================== */
 
     .evidence-box {
-        background: #ffffff !important;
+        background: white !important;
 
         border: 1px solid #ead1df !important;
         border-left: 6px solid #ff69a6 !important;
@@ -406,14 +347,12 @@ st.markdown(
         box-shadow:
             0 4px 14px
             rgba(120, 60, 120, 0.08) !important;
+
+        color: #333333 !important;
     }
 
     .evidence-box b {
         color: #b52f78 !important;
-    }
-
-    .evidence-box {
-        color: #333333 !important;
     }
 
 
@@ -421,13 +360,11 @@ st.markdown(
        VIDEO AREA
        ======================================================== */
 
-    /* Keep the surrounding video area light */
     [data-testid="stCustomComponentV1"] {
-        background: #ffffff !important;
+        background: white !important;
         border-radius: 15px !important;
     }
 
-    /* Streamlit iframe */
     iframe {
         color-scheme: light !important;
     }
@@ -443,20 +380,15 @@ st.markdown(
 
 
     /* ========================================================
-       LINKS
+       CAPTIONS
        ======================================================== */
 
-    a {
-        color: #b52f78 !important;
+    [data-testid="stCaptionContainer"] {
+        color: #666666 !important;
     }
 
-
-    /* ========================================================
-       INFO / STATUS TEXT
-       ======================================================== */
-
-    [data-testid="stMarkdownContainer"] p {
-        color: #333333 !important;
+    [data-testid="stCaptionContainer"] p {
+        color: #666666 !important;
     }
 
     </style>
@@ -570,23 +502,14 @@ def add_evidence(
 
     item = {
         "type": evidence_type,
-
-        "timestamp":
-            now(),
-
+        "timestamp": now(),
         "incident_id":
             st.session_state.incident_id,
-
-        "description":
-            description,
-
-        "file":
-            str(file_path)
+        "description": description,
+        "file": str(file_path)
     }
 
-    st.session_state.evidence.append(
-        item
-    )
+    st.session_state.evidence.append(item)
 
     save_manifest()
 
@@ -602,14 +525,8 @@ def start_incident():
         + uuid.uuid4().hex[:6].upper()
     )
 
-    st.session_state.incident_id = (
-        incident_id
-    )
-
-    st.session_state.incident_started = (
-        now()
-    )
-
+    st.session_state.incident_id = incident_id
+    st.session_state.incident_started = now()
     st.session_state.incident_active = True
 
     st.session_state.sos_message = (
@@ -617,13 +534,10 @@ def start_incident():
     )
 
     st.session_state.evidence = []
-
     st.session_state.location_requested = False
-
     st.session_state.ai_result = None
 
     folder()
-
     save_manifest()
 
 
@@ -665,7 +579,6 @@ def classify(text):
         word in text
         for word in high
     ):
-
         return (
             "HIGH RISK",
             "The description contains indicators of a potentially immediate safety threat."
@@ -675,7 +588,6 @@ def classify(text):
         word in text
         for word in medium
     ):
-
         return (
             "MEDIUM RISK",
             "The description suggests a potentially unsafe situation."
@@ -713,7 +625,6 @@ if st.query_params.get("mode") == "responder":
             "⬅️ Back to SafeHer AI",
             key="responder_unauthorized_back"
         ):
-
             st.query_params.clear()
             st.rerun()
 
@@ -734,8 +645,7 @@ if st.query_params.get("mode") == "responder":
         if item.is_dir():
             incidents.append(item)
 
-    incidents = sorted(
-        incidents,
+    incidents.sort(
         key=lambda x: x.name,
         reverse=True
     )
@@ -819,7 +729,6 @@ if st.query_params.get("mode") == "responder":
         "⬅️ Back to SafeHer AI",
         key="responder_dashboard_back"
     ):
-
         st.query_params.clear()
         st.rerun()
 
@@ -988,11 +897,19 @@ else:
             snap.getvalue()
         )
 
-        add_evidence(
-            "SNAPSHOT",
-            snapshot_file,
-            "Camera snapshot captured during active incident."
+        already_saved = any(
+            item["type"] == "SNAPSHOT"
+            and item["file"] == str(snapshot_file)
+            for item in st.session_state.evidence
         )
+
+        if not already_saved:
+
+            add_evidence(
+                "SNAPSHOT",
+                snapshot_file,
+                "Camera snapshot captured during active incident."
+            )
 
         st.success(
             "✅ Snapshot saved successfully."
@@ -1026,9 +943,6 @@ else:
     if st.session_state.location_requested:
 
         if GEO_AVAILABLE:
-
-            # IMPORTANT:
-            # NO key parameter here.
 
             location = streamlit_geolocation()
 
@@ -1085,8 +999,7 @@ else:
 
                 location_exists = any(
                     item["type"] == "LOCATION"
-                    for item in
-                    st.session_state.evidence
+                    for item in st.session_state.evidence
                 )
 
                 if not location_exists:
