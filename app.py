@@ -172,23 +172,76 @@ for k,v in {"incident_active":False,"incident_id":None,"incident_started":None,"
 
 # Responder mode
 if st.query_params.get("mode","") == "responder":
-    st.markdown('<div class="hero"><h1>👮 SafeHer AI</h1><p>Authorized Responder Dashboard</p></div>',unsafe_allow_html=True)
-    key=st.text_input("Responder Key",type="password")
-    if key != "safeher-demo": st.info("Enter the authorized responder key."); st.stop()
-    incidents=sorted([p for p in EVIDENCE_DIR.iterdir() if p.is_dir()],key=lambda p:p.stat().st_mtime,reverse=True)
-    if not incidents: st.info("No incidents recorded yet."); st.stop()
-    selected=st.selectbox("Select Incident",incidents,format_func=lambda p:p.name)
-    st.markdown(f'<div class="incident"><b>Incident ID:</b> {selected.name}</div>',unsafe_allow_html=True)
-    mf=selected/"evidence_manifest.json"
+    st.markdown(
+        '<div class="hero"><h1>👮 SafeHer AI</h1>'
+        '<p>Authorized Responder Dashboard</p></div>',
+        unsafe_allow_html=True
+    )
+
+    key = st.text_input("Responder Key", type="password")
+
+    if key != "safeher-demo":
+        st.info("Enter the authorized responder key.")
+        st.stop()
+
+    incidents = sorted(
+        [p for p in EVIDENCE_DIR.iterdir() if p.is_dir()],
+        key=lambda p: p.stat().st_mtime,
+        reverse=True
+    )
+
+    if not incidents:
+        st.info("No incidents recorded yet.")
+
+        if st.button("⬅️ Back to SafeHer AI"):
+            st.query_params.clear()
+            st.rerun()
+
+        st.stop()
+
+    selected = st.selectbox(
+        "Select Incident",
+        incidents,
+        format_func=lambda p: p.name
+    )
+
+    st.markdown(
+        f'<div class="incident"><b>Incident ID:</b> {selected.name}</div>',
+        unsafe_allow_html=True
+    )
+
+    mf = selected / "evidence_manifest.json"
+
     if mf.exists():
         for item in json.loads(mf.read_text(encoding="utf-8")):
-            st.markdown(f'<div class="evidence"><b>{item["type"]}</b><br>🕒 {item["timestamp"]}<br>📝 {item["description"]}</div>',unsafe_allow_html=True)
-            fp=Path(item["file"])
-            if fp.exists():
-                if fp.suffix.lower() in {".jpg",".jpeg",".png",".webp"}: st.image(str(fp),use_container_width=True)
-                else: st.download_button("⬇️ Download "+fp.name,fp.read_bytes(),file_name=fp.name,key="dl_"+uuid.uuid4().hex)
-    st.stop()
 
+            st.markdown(
+                f'<div class="evidence">'
+                f'<b>{item["type"]}</b><br>'
+                f'🕒 {item["timestamp"]}<br>'
+                f'📝 {item["description"]}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
+            fp = Path(item["file"])
+
+            if fp.exists():
+                if fp.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}:
+                    st.image(str(fp), use_container_width=True)
+                else:
+                    st.download_button(
+                        "⬇️ Download " + fp.name,
+                        fp.read_bytes(),
+                        file_name=fp.name,
+                        key="dl_" + uuid.uuid4().hex
+                    )
+
+    if st.button("⬅️ Back to SafeHer AI"):
+        st.query_params.clear()
+        st.rerun()
+
+    st.stop()
 st.markdown('<div class="hero"><h1>🌸 SafeHer AI</h1><p>AI-assisted personal safety, emergency evidence capture and responder support</p></div>',unsafe_allow_html=True)
 
 if st.session_state.incident_active:
@@ -253,9 +306,11 @@ if st.session_state.incident_id:
     if mf.exists(): st.download_button("⬇️ Download Incident Manifest",mf.read_bytes(),file_name=f"{st.session_state.incident_id}_manifest.json",mime="application/json")
 
 with st.expander("👮 Responder Dashboard"):
-    st.write("Open the same site with `?mode=responder` and enter the demo responder key:")
-    st.code("safeher-demo")
+    st.write("Authorized responders can open the incident evidence dashboard.")
 
+    if st.button("👮 Open Responder Dashboard", use_container_width=True):
+        st.query_params["mode"] = "responder"
+        st.rerun()
 with st.expander("🔧 Technical Workflow"):
     st.markdown("""
 **SOS → Incident ID → incident-specific folder → snapshot/location evidence → emergency camera stream → AI risk classification → responder dashboard.**
