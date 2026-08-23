@@ -23,78 +23,182 @@ st.set_page_config(page_title="SafeHer AI", page_icon="🌸", layout="wide")
 
 st.markdown("""
 <style>
-.stApp{
-    background:linear-gradient(135deg,#fff8fc,#f8f3ff,#eef7ff);
-    color:#222222;
+/* ==============================
+   SAFEHER AI LIGHT GIRLY THEME
+   ============================== */
+
+.stApp {
+    background: linear-gradient(135deg, #fff7fb 0%, #f8f3ff 50%, #eef7ff 100%);
 }
 
-.block-container{
-    max-width:1250px;
-    padding-top:25px;
+/* Main content */
+.block-container {
+    max-width: 1250px;
+    padding-top: 25px;
+    padding-bottom: 50px;
 }
 
-.hero{
-    padding:30px;
-    border-radius:28px;
-    background:linear-gradient(135deg,#ff5f9e,#a66cff);
-    color:white;
-    box-shadow:0 12px 35px rgba(166,108,255,.25);
+/* Normal text */
+.stMarkdown,
+.stMarkdown p,
+.stMarkdown span {
+    color: #222222;
 }
 
-.hero h1{
-    margin:0;
-    font-size:44px;
-    color:white;
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #222222 !important;
 }
 
-.hero p{
-    font-size:18px;
-    color:white;
+/* ==============================
+   STREAMLIT EXPANDERS
+   ============================== */
+
+[data-testid="stExpander"] {
+    background: #ffffff !important;
+    border: 1px solid #eadcf5 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 5px 18px rgba(180, 130, 210, 0.12) !important;
+    overflow: hidden !important;
 }
 
-.card{
-    background:rgba(255,255,255,.95);
-    border:1px solid #eadcf0;
-    border-radius:20px;
-    padding:20px;
-    margin-bottom:16px;
-    color:#222222;
+[data-testid="stExpander"] details {
+    background: #ffffff !important;
 }
 
-.incident{
-    background:#fff0f4;
-    border:2px solid #ff8cad;
-    border-radius:18px;
-    padding:16px;
-    margin-bottom:18px;
-    color:#222222;
+[data-testid="stExpander"] summary {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border-radius: 18px !important;
 }
 
-.evidence{
-    background:white;
-    border-left:5px solid #b16cff;
-    border-radius:14px;
-    padding:14px;
-    margin-bottom:12px;
-    color:#222222;
+[data-testid="stExpander"] summary:hover {
+    background: #fff4fa !important;
 }
 
-.footer{
-    text-align:center;
-    color:#555555;
-    padding:30px;
+[data-testid="stExpander"] summary p,
+[data-testid="stExpander"] summary span {
+    color: #333333 !important;
 }
 
-p, span, label, div{
-    color:#222222;
+[data-testid="stExpander"] svg {
+    color: #9b70c9 !important;
+    fill: #9b70c9 !important;
 }
 
-button{
-    color:#222222 !important;
+/* Text inside expander */
+[data-testid="stExpander"] [data-testid="stMarkdownContainer"],
+[data-testid="stExpander"] p,
+[data-testid="stExpander"] span {
+    color: #333333 !important;
 }
 
-h1, h2, h3, h4, h5, h6{
-    color:#222222;
+/* ==============================
+   BUTTONS
+   ============================== */
+
+.stButton > button {
+    background: linear-gradient(135deg, #ff6fa5, #a66cff) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 14px !important;
+    padding: 12px 24px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 5px 15px rgba(166, 108, 255, 0.20) !important;
+}
+
+.stButton > button:hover {
+    background: linear-gradient(135deg, #ff5c98, #9258ed) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.stButton > button p,
+.stButton > button span {
+    color: #ffffff !important;
+}
+
+/* ==============================
+   INPUTS
+   ============================== */
+
+.stTextInput input,
+.stTextArea textarea,
+.stSelectbox div[data-baseweb="select"] {
+    background: #ffffff !important;
+    color: #222222 !important;
+    border-radius: 12px !important;
+}
+
+/* Input labels */
+.stTextInput label,
+.stTextArea label,
+.stSelectbox label {
+    color: #333333 !important;
+}
+
+/* ==============================
+   CARDS
+   ============================== */
+
+.hero {
+    padding: 30px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #ff5f9e, #a66cff);
+    color: white;
+    box-shadow: 0 12px 35px rgba(166,108,255,.25);
+}
+
+.hero h1,
+.hero p,
+.hero span {
+    color: white !important;
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid #eadcf0;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    color: #222222;
+    box-shadow: 0 5px 18px rgba(180,130,210,.10);
+}
+
+.incident {
+    background: #fff0f4;
+    border: 2px solid #ff8cad;
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 18px;
+    color: #222222;
+}
+
+.evidence {
+    background: #ffffff;
+    border-left: 5px solid #b16cff;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    color: #222222;
+}
+
+/* ==============================
+   SUCCESS / INFO / WARNING BOXES
+   ============================== */
+
+[data-testid="stAlert"] {
+    border-radius: 15px !important;
+}
+
+/* ==============================
+   FOOTER
+   ============================== */
+
+.footer {
+    text-align: center;
+    color: #555555;
+    padding: 30px;
 }
 </style>
 """, unsafe_allow_html=True)
