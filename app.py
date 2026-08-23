@@ -418,27 +418,246 @@ else:
             "Install streamlit-webrtc and av."
         )
 
-st.header("🛡️ Evidence Captured")
-if not st.session_state.evidence: st.info("No completed evidence actions yet.")
+st.header("📸 Emergency Evidence Capture")
+
+if not st.session_state.incident_active:
+    st.info("Activate SOS first.")
+
 else:
-    for i,item in enumerate(reversed(st.session_state.evidence),1): st.markdown(f'<div class="evidence"><b>#{i} {item["type"]}</b><br>🕒 {item["timestamp"]}<br>🆔 {item["incident_id"]}<br>📝 {item["description"]}<br>📁 {item["file"]}</div>',unsafe_allow_html=True)
+    p = folder()
+
+    # =========================
+    # SNAPSHOT
+    # =========================
+    st.subheader("📷 Emergency Snapshot")
+
+    snap = st.camera_input(
+        "Take emergency snapshot",
+        key="camera"
+    )
+
+    if snap is not None:
+        fp = p / f"{st.session_state.incident_id}_snapshot_{datetime.now():%Y%m%d_%H%M%S}.jpg"
+
+        fp.write_bytes(snap.getvalue())
+
+        add_evidence(
+            "SNAPSHOT",
+            fp,
+            "Camera snapshot captured during active incident."
+        )
+
+        st.success("✅ Snapshot saved successfully.")
+
+    # =========================
+    # LOCATION
+    # =========================
+    st.divider()
+
+    st.subheader("📍 Emergency Location")
+
+    if "location_requested" not in st.session_state:
+        st.session_state.location_requested = False
+
+    if st.button(
+        "📍 CAPTURE MY LOCATION",
+        use_container_width=True
+    ):
+        st.session_state.location_requested = True
+        st.rerun()
+
+    if st.session_state.location_requested:
+
+        if GEO_AVAILABLE:
+
+            loc = streamlit_geolocation()
+
+            if loc and loc.get("latitude") is not None:
+
+                data = {
+                    "incident_id": st.session_state.incident_id,
+                    "timestamp": now(),
+                    "latitude": loc.get("latitude"),
+                    "longitude": loc.get("longitude"),
+                    "accuracy": loc.get("accuracy")
+                }
+
+                fp = p / f"{st.session_state.incident_id}_location.json"
+
+                fp.write_text(
+                    json.dumps(data, indent=2),
+                    encoding="utf-8"
+                )
+
+                if not any(
+                    x["type"] == "LOCATION"
+                    for x in st.session_state.evidence
+                ):
+                    add_evidence(
+                        "LOCATION",
+                        fp,
+                        f"GPS: {data['latitude']}, {data['longitude']}"
+                    )
+
+                st.success("✅ Location captured successfully.")
+
+                st.write(
+                    f"📍 Latitude: `{data['latitude']}`"
+                )
+
+                st.write(
+                    f"📍 Longitude: `{data['longitude']}`"
+                )
+
+                if data.get("accuracy") is not None:
+                    st.write(
+                        f"🎯 Accuracy: `{data['accuracy']} meters`"
+                    )
+
+                try:
+                    st.map({
+                        "latitude": [data["latitude"]],
+                        "longitude": [data["longitude"]]
+                    })
+                except Exception:
+                    pass
+
+            else:
+                st.info(
+                    "📍 Please allow location permission in your browser. "
+                    "After allowing it, click **CAPTURE MY LOCATION** again."
+                )
+
+        else:
+            st.error(
+                "Location component is unavailable. "
+                "Make sure `streamlit-geolocation` is in requirements.txt."
+            )
+
+    # =========================
+    # VIDEO
+    # =========================
+    st.divider()
+
+    st.header("🎥 Emergency Video Capture")
+
+    if VIDEO_AVAILABLE:
+
+        st.info(
+            "🎥 Click START below to activate the emergency camera."
+        )
+
+        rtc = RTCConfiguration({
+            "iceServers": [
+                {
+                    "urls": [
+                        "stun:stun.l.google.com:19302"
+                    ]
+                }
+            ]
+        })
+
+        ctx = webrtc_streamer(
+            key="safeher-video-" + st.session_state.incident_id,
+            mode=WebRtcMode.SENDRECV,
+            rtc_configuration=rtc,
+            media_stream_constraints={
+                "video": True,
+                "audio": True
+            },
+            async_processing=True,
+            media_toggle_controls=True
+        )
+
+        if ctx.state.playing:
+            st.success("🔴 Emergency camera is ACTIVE.")
+        else:
+            st.warning("⏸️ Camera is waiting to be started.")
+
+        st.caption(
+            "When the browser asks for camera/microphone permission, "
+            "select Allow."
+        )
+
+    else:
+        st.error(
+            "Video component unavailable. "
+            "Check streamlit-webrtc and av in requirements.txt."
+        )
+
+
+st.header("🛡️ Evidence Captured")
+
+if not st.session_state.evidence:
+    st.info("No completed evidence actions yet.")
+
+else:
+    for i, item in enumerate(
+        reversed(st.session_state.evidence),
+        1
+    ):
+        st.markdown(
+            f'''
+            <div class="evidence">
+                <b>#{i} {item["type"]}</b><br>
+                🕒 {item["timestamp"]}<br>
+                🆔 {item["incident_id"]}<br>
+                📝 {item["description"]}<br>
+                📁 {item["file"]}
+            </div>
+            ''',
+            unsafe_allow_html=True
+        )
+
 
 st.header("🤖 AI Safety Classification")
-desc=st.text_area("Describe the situation",placeholder="Example: Someone has been following me for the last 10 minutes...")
+
+desc = st.text_area(
+    "Describe the situation",
+    placeholder="Example: Someone has been following me for the last 10 minutes..."
+)
+
 if st.button("🤖 Analyze Safety Situation"):
-    st.session_state.ai_result=classify(desc)
+    st.session_state.ai_result = classify(desc)
+
 if st.session_state.ai_result:
-    risk,ex=st.session_state.ai_result
-    if risk=="HIGH RISK": st.error(f"🚨 {risk}: {ex}")
-    elif risk=="MEDIUM RISK": st.warning(f"⚠️ {risk}: {ex}")
-    else: st.success(f"🟢 {risk}: {ex}")
+
+    risk, ex = st.session_state.ai_result
+
+    if risk == "HIGH RISK":
+        st.error(f"🚨 {risk}: {ex}")
+
+    elif risk == "MEDIUM RISK":
+        st.warning(f"⚠️ {risk}: {ex}")
+
+    else:
+        st.success(f"🟢 {risk}: {ex}")
+
 
 st.header("⚙️ Incident Controls")
-if st.session_state.incident_active and st.button("🛑 End Incident"):
-    st.session_state.incident_active=False; st.session_state.sos_message="Incident ended. Evidence remains saved."; st.rerun()
+
+if st.session_state.incident_active:
+
+    if st.button("🛑 End Incident"):
+        st.session_state.incident_active = False
+        st.session_state.sos_message = (
+            "Incident ended. Evidence remains saved."
+        )
+        st.rerun()
+
+
 if st.session_state.incident_id:
-    mf=folder()/"evidence_manifest.json"
-    if mf.exists(): st.download_button("⬇️ Download Incident Manifest",mf.read_bytes(),file_name=f"{st.session_state.incident_id}_manifest.json",mime="application/json")
+
+    mf = folder() / "evidence_manifest.json"
+
+    if mf.exists():
+
+        st.download_button(
+            "⬇️ Download Incident Manifest",
+            mf.read_bytes(),
+            file_name=f"{st.session_state.incident_id}_manifest.json",
+            mime="application/json"
+        )
 
 with st.expander("👮 Responder Dashboard"):
     st.write("Authorized responders can open the incident evidence dashboard.")
