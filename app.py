@@ -48,52 +48,88 @@ BASE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ============================================================
-# LIGHT / GIRLY THEME
+# LIGHT THEME
 # ============================================================
 
 st.markdown(
     """
     <style>
 
-    html,
-    body,
-    [data-testid="stAppViewContainer"],
-    [data-testid="stAppViewBlockContainer"],
-    [data-testid="stMain"],
-    [data-testid="stHeader"],
-    .main,
+    /* ========================================================
+       FORCE LIGHT COLOR SCHEME
+       ======================================================== */
+
+    :root {
+        color-scheme: light !important;
+    }
+
+    html {
+        color-scheme: light !important;
+        background: #fff7fc !important;
+    }
+
+    body {
+        background: #fff7fc !important;
+        color: #333333 !important;
+    }
+
+    [data-testid="stAppViewContainer"] {
+        background: #fff7fc !important;
+    }
+
+    [data-testid="stAppViewBlockContainer"] {
+        background: #fff7fc !important;
+    }
+
+    [data-testid="stMain"] {
+        background: #fff7fc !important;
+    }
+
+    .main {
+        background: #fff7fc !important;
+    }
+
     .block-container {
         background: #fff7fc !important;
     }
 
-    /* MAIN TEXT */
-    [data-testid="stAppViewContainer"] * {
-        color: #333333;
-    }
+
+    /* ========================================================
+       NORMAL TEXT
+       ======================================================== */
 
     h1, h2, h3, h4, h5, h6 {
         color: #333333 !important;
     }
 
-    p, label, span, div {
-        color: #333333;
+    p {
+        color: #333333 !important;
     }
 
-    /* HERO */
+    label {
+        color: #333333 !important;
+    }
+
+
+    /* ========================================================
+       HERO
+       ======================================================== */
+
     .safeher-hero {
         background: linear-gradient(
             135deg,
-            #ff5a9f,
-            #d15cff
+            #ff5a9f 0%,
+            #d15cff 100%
         ) !important;
 
         border-radius: 25px;
-        padding: 28px;
-        margin-bottom: 24px;
+        padding: 30px;
+        margin-bottom: 25px;
         text-align: center;
 
         box-shadow:
-            0 10px 30px rgba(180, 80, 160, 0.15);
+            0 10px 30px
+            rgba(180, 80, 160, 0.15);
     }
 
     .safeher-hero h1 {
@@ -105,43 +141,70 @@ st.markdown(
     .safeher-hero p {
         color: #ffffff !important;
         font-size: 17px !important;
-        margin: 8px 0 0 0 !important;
+        margin-top: 8px !important;
     }
 
-    /* INCIDENT */
+
+    /* ========================================================
+       INCIDENT BOX
+       ======================================================== */
+
     .incident-box {
         background: #fff0f6 !important;
-        border: 2px solid #ff9bc4;
-        border-radius: 17px;
-        padding: 16px;
-        margin-bottom: 20px;
+        border: 2px solid #ff9bc4 !important;
+        border-radius: 17px !important;
+        padding: 16px !important;
+        margin-bottom: 20px !important;
     }
 
-    .incident-box * {
+    .incident-box,
+    .incident-box b {
         color: #333333 !important;
     }
 
-    /* CARDS */
+
+    /* ========================================================
+       WHITE CARDS
+       ======================================================== */
+
     .safeher-card {
         background: #ffffff !important;
-        border: 1px solid #efd7e4;
-        border-radius: 18px;
-        padding: 20px;
-        margin: 15px 0;
-        box-shadow: 0 5px 18px rgba(120, 60, 120, 0.07);
+        border: 1px solid #efd7e4 !important;
+        border-radius: 18px !important;
+        padding: 20px !important;
+        margin: 15px 0 !important;
+
+        box-shadow:
+            0 5px 18px
+            rgba(120, 60, 120, 0.07) !important;
     }
 
-    .safeher-card * {
+    .safeher-card h2,
+    .safeher-card p {
         color: #333333 !important;
     }
 
-    /* TEXT AREA */
+
+    /* ========================================================
+       TEXT AREA
+       ======================================================== */
+
+    [data-testid="stTextArea"] {
+        background: #ffffff !important;
+    }
+
+    [data-testid="stTextArea"] label {
+        color: #333333 !important;
+    }
+
     [data-testid="stTextArea"] textarea {
         background: #ffffff !important;
         color: #222222 !important;
         -webkit-text-fill-color: #222222 !important;
+
         border: 2px solid #dfbfd2 !important;
         border-radius: 12px !important;
+
         caret-color: #222222 !important;
     }
 
@@ -151,37 +214,45 @@ st.markdown(
         opacity: 1 !important;
     }
 
-    [data-testid="stTextArea"] label {
-        color: #333333 !important;
-    }
 
-    /* ALL BUTTONS */
-    .stButton > button,
-    .stDownloadButton > button {
+    /* ========================================================
+       ALL NORMAL BUTTONS
+       ======================================================== */
+
+    .stButton > button {
         background: #ffffff !important;
+
         color: #333333 !important;
         -webkit-text-fill-color: #333333 !important;
+
         border: 2px solid #dfb8ce !important;
         border-radius: 12px !important;
+
         font-weight: 700 !important;
         min-height: 45px !important;
     }
 
-    .stButton > button p,
-    .stButton > button span,
-    .stDownloadButton > button p,
-    .stDownloadButton > button span {
+    .stButton > button p {
         color: #333333 !important;
         -webkit-text-fill-color: #333333 !important;
     }
 
-    .stButton > button:hover,
-    .stDownloadButton > button:hover {
+    .stButton > button span {
+        color: #333333 !important;
+        -webkit-text-fill-color: #333333 !important;
+    }
+
+    .stButton > button:hover {
         background: #fff0f7 !important;
+        color: #222222 !important;
         border-color: #ff65a5 !important;
     }
 
-    /* PRIMARY SOS */
+
+    /* ========================================================
+       PRIMARY SOS BUTTON
+       ======================================================== */
+
     .stButton > button[kind="primary"] {
         background: linear-gradient(
             135deg,
@@ -191,6 +262,7 @@ st.markdown(
 
         color: #ffffff !important;
         -webkit-text-fill-color: #ffffff !important;
+
         border: none !important;
     }
 
@@ -200,17 +272,47 @@ st.markdown(
         -webkit-text-fill-color: #ffffff !important;
     }
 
-    /* CAMERA */
+
+    /* ========================================================
+       DOWNLOAD BUTTON
+       ======================================================== */
+
+    .stDownloadButton > button {
+        background: #ffffff !important;
+
+        color: #333333 !important;
+        -webkit-text-fill-color: #333333 !important;
+
+        border: 2px solid #dfb8ce !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+    }
+
+    .stDownloadButton > button p,
+    .stDownloadButton > button span {
+        color: #333333 !important;
+        -webkit-text-fill-color: #333333 !important;
+    }
+
+
+    /* ========================================================
+       CAMERA INPUT
+       ======================================================== */
+
     [data-testid="stCameraInput"] {
         background: #ffffff !important;
+
         border: 2px solid #ead1df !important;
         border-radius: 15px !important;
+
         padding: 8px !important;
     }
 
-    [data-testid="stCameraInput"] label,
-    [data-testid="stCameraInput"] p,
-    [data-testid="stCameraInput"] span {
+    [data-testid="stCameraInput"] label {
+        color: #333333 !important;
+    }
+
+    [data-testid="stCameraInput"] p {
         color: #333333 !important;
     }
 
@@ -220,18 +322,24 @@ st.markdown(
         border: 2px solid #dfb8ce !important;
     }
 
-    /* ALERTS */
+
+    /* ========================================================
+       ALERTS
+       ======================================================== */
+
     [data-testid="stAlert"] {
         border-radius: 12px !important;
     }
 
-    [data-testid="stAlert"] p,
-    [data-testid="stAlert"] span,
-    [data-testid="stAlert"] div {
+    [data-testid="stAlert"] p {
         color: #333333 !important;
     }
 
-    /* METRICS */
+
+    /* ========================================================
+       METRICS
+       ======================================================== */
+
     [data-testid="stMetric"] {
         background: #ffffff !important;
         border: 1px solid #ead1df !important;
@@ -239,54 +347,116 @@ st.markdown(
         padding: 10px !important;
     }
 
-    [data-testid="stMetricLabel"],
-    [data-testid="stMetricLabel"] * {
+    [data-testid="stMetricLabel"] {
         color: #666666 !important;
     }
 
-    [data-testid="stMetricValue"],
-    [data-testid="stMetricValue"] * {
+    [data-testid="stMetricValue"] {
         color: #333333 !important;
     }
 
-    /* EXPANDERS */
+
+    /* ========================================================
+       EXPANDERS
+       ======================================================== */
+
     [data-testid="stExpander"] {
         background: #ffffff !important;
         border: 2px solid #ead1df !important;
         border-radius: 14px !important;
     }
 
-    [data-testid="stExpander"] p,
-    [data-testid="stExpander"] span {
+    [data-testid="stExpander"] summary {
         color: #333333 !important;
     }
 
-    /* CAPTION */
-    [data-testid="stCaptionContainer"],
-    [data-testid="stCaptionContainer"] * {
+    [data-testid="stExpander"] p {
+        color: #333333 !important;
+    }
+
+
+    /* ========================================================
+       CAPTIONS
+       ======================================================== */
+
+    [data-testid="stCaptionContainer"] {
         color: #666666 !important;
     }
 
-    /* EVIDENCE */
-    .evidence-box {
-        background: #ffffff !important;
-        border-left: 5px solid #ff69a6;
-        border-radius: 14px;
-        padding: 15px;
-        margin: 10px 0;
-        box-shadow: 0 4px 14px rgba(120, 60, 120, 0.08);
+    [data-testid="stCaptionContainer"] p {
+        color: #666666 !important;
     }
 
-    .evidence-box * {
+
+    /* ========================================================
+       EVIDENCE BOX
+       ======================================================== */
+
+    .evidence-box {
+        background: #ffffff !important;
+
+        border: 1px solid #ead1df !important;
+        border-left: 6px solid #ff69a6 !important;
+
+        border-radius: 14px !important;
+
+        padding: 16px !important;
+        margin: 12px 0 !important;
+
+        box-shadow:
+            0 4px 14px
+            rgba(120, 60, 120, 0.08) !important;
+    }
+
+    .evidence-box b {
+        color: #b52f78 !important;
+    }
+
+    .evidence-box {
         color: #333333 !important;
     }
+
+
+    /* ========================================================
+       VIDEO AREA
+       ======================================================== */
+
+    /* Keep the surrounding video area light */
+    [data-testid="stCustomComponentV1"] {
+        background: #ffffff !important;
+        border-radius: 15px !important;
+    }
+
+    /* Streamlit iframe */
+    iframe {
+        color-scheme: light !important;
+    }
+
+
+    /* ========================================================
+       DIVIDERS
+       ======================================================== */
 
     hr {
         border-color: #ead1df !important;
     }
 
+
+    /* ========================================================
+       LINKS
+       ======================================================== */
+
     a {
         color: #b52f78 !important;
+    }
+
+
+    /* ========================================================
+       INFO / STATUS TEXT
+       ======================================================== */
+
+    [data-testid="stMarkdownContainer"] p {
+        color: #333333 !important;
     }
 
     </style>
@@ -299,19 +469,26 @@ st.markdown(
 # SESSION STATE
 # ============================================================
 
-defaults = {
-    "incident_active": False,
-    "incident_id": None,
-    "incident_started": None,
-    "sos_message": "",
-    "evidence": [],
-    "location_requested": False,
-    "ai_result": None,
-}
+if "incident_active" not in st.session_state:
+    st.session_state.incident_active = False
 
-for key, value in defaults.items():
-    if key not in st.session_state:
-        st.session_state[key] = value
+if "incident_id" not in st.session_state:
+    st.session_state.incident_id = None
+
+if "incident_started" not in st.session_state:
+    st.session_state.incident_started = None
+
+if "sos_message" not in st.session_state:
+    st.session_state.sos_message = ""
+
+if "evidence" not in st.session_state:
+    st.session_state.evidence = []
+
+if "location_requested" not in st.session_state:
+    st.session_state.location_requested = False
+
+if "ai_result" not in st.session_state:
+    st.session_state.ai_result = None
 
 
 # ============================================================
@@ -319,7 +496,9 @@ for key, value in defaults.items():
 # ============================================================
 
 def now():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
 
 def safe_name(value):
@@ -331,12 +510,15 @@ def safe_name(value):
 
 
 def folder():
+
     if not st.session_state.incident_id:
         return BASE_DIR
 
     path = (
         BASE_DIR
-        / safe_name(st.session_state.incident_id)
+        / safe_name(
+            st.session_state.incident_id
+        )
     )
 
     path.mkdir(
@@ -372,7 +554,10 @@ def save_manifest():
     )
 
     manifest.write_text(
-        json.dumps(data, indent=2),
+        json.dumps(
+            data,
+            indent=2
+        ),
         encoding="utf-8"
     )
 
@@ -385,14 +570,23 @@ def add_evidence(
 
     item = {
         "type": evidence_type,
-        "timestamp": now(),
+
+        "timestamp":
+            now(),
+
         "incident_id":
             st.session_state.incident_id,
-        "description": description,
-        "file": str(file_path)
+
+        "description":
+            description,
+
+        "file":
+            str(file_path)
     }
 
-    st.session_state.evidence.append(item)
+    st.session_state.evidence.append(
+        item
+    )
 
     save_manifest()
 
@@ -401,13 +595,21 @@ def start_incident():
 
     incident_id = (
         "SH-"
-        + datetime.now().strftime("%Y%m%d-%H%M%S")
+        + datetime.now().strftime(
+            "%Y%m%d-%H%M%S"
+        )
         + "-"
         + uuid.uuid4().hex[:6].upper()
     )
 
-    st.session_state.incident_id = incident_id
-    st.session_state.incident_started = now()
+    st.session_state.incident_id = (
+        incident_id
+    )
+
+    st.session_state.incident_started = (
+        now()
+    )
+
     st.session_state.incident_active = True
 
     st.session_state.sos_message = (
@@ -415,10 +617,13 @@ def start_incident():
     )
 
     st.session_state.evidence = []
+
     st.session_state.location_requested = False
+
     st.session_state.ai_result = None
 
     folder()
+
     save_manifest()
 
 
@@ -456,13 +661,21 @@ def classify(text):
         "following"
     ]
 
-    if any(word in text for word in high):
+    if any(
+        word in text
+        for word in high
+    ):
+
         return (
             "HIGH RISK",
             "The description contains indicators of a potentially immediate safety threat."
         )
 
-    if any(word in text for word in medium):
+    if any(
+        word in text
+        for word in medium
+    ):
+
         return (
             "MEDIUM RISK",
             "The description suggests a potentially unsafe situation."
@@ -490,9 +703,7 @@ if st.query_params.get("mode") == "responder":
         unsafe_allow_html=True
     )
 
-    responder_key = st.query_params.get("key")
-
-    if responder_key != "safeher-demo":
+    if st.query_params.get("key") != "safeher-demo":
 
         st.error(
             "🔐 Unauthorized responder access."
@@ -502,6 +713,7 @@ if st.query_params.get("mode") == "responder":
             "⬅️ Back to SafeHer AI",
             key="responder_unauthorized_back"
         ):
+
             st.query_params.clear()
             st.rerun()
 
@@ -511,11 +723,14 @@ if st.query_params.get("mode") == "responder":
         "✅ Authorized responder access granted."
     )
 
-    st.header("🚨 Emergency Incidents")
+    st.header(
+        "🚨 Emergency Incidents"
+    )
 
     incidents = []
 
     for item in BASE_DIR.iterdir():
+
         if item.is_dir():
             incidents.append(item)
 
@@ -618,12 +833,15 @@ if st.query_params.get("mode") == "responder":
 st.markdown(
     """
     <div class="safeher-hero">
+
         <h1>🌸 SafeHer AI</h1>
+
         <p>
             AI-assisted personal safety,
             emergency evidence capture
             and responder support
         </p>
+
     </div>
     """,
     unsafe_allow_html=True
@@ -639,11 +857,17 @@ if st.session_state.incident_active:
     st.markdown(
         f"""
         <div class="incident-box">
+
             🚨 <b>INCIDENT ACTIVE</b>
+
             <br>
+
             🆔 {st.session_state.incident_id}
+
             <br>
+
             🕒 {st.session_state.incident_started}
+
         </div>
         """,
         unsafe_allow_html=True
@@ -663,15 +887,19 @@ else:
 st.markdown(
     """
     <div class="safeher-card">
+
         <h2>🚨 Emergency SOS</h2>
+
         <p>
             Creates a unique incident and enables
             evidence capture.
         </p>
+
     </div>
     """,
     unsafe_allow_html=True
 )
+
 
 if st.button(
     "🚨 ACTIVATE SOS",
@@ -718,6 +946,7 @@ else:
 
     incident_folder = folder()
 
+
     # ========================================================
     # SNAPSHOT
     # ========================================================
@@ -759,19 +988,11 @@ else:
             snap.getvalue()
         )
 
-        already_saved = any(
-            item["type"] == "SNAPSHOT"
-            and item["file"] == str(snapshot_file)
-            for item in st.session_state.evidence
+        add_evidence(
+            "SNAPSHOT",
+            snapshot_file,
+            "Camera snapshot captured during active incident."
         )
-
-        if not already_saved:
-
-            add_evidence(
-                "SNAPSHOT",
-                snapshot_file,
-                "Camera snapshot captured during active incident."
-            )
 
         st.success(
             "✅ Snapshot saved successfully."
@@ -807,9 +1028,7 @@ else:
         if GEO_AVAILABLE:
 
             # IMPORTANT:
-            # No key= argument here.
-            # Some streamlit-geolocation versions
-            # do not support key.
+            # NO key parameter here.
 
             location = streamlit_geolocation()
 
@@ -864,12 +1083,13 @@ else:
                     encoding="utf-8"
                 )
 
-                already_location = any(
+                location_exists = any(
                     item["type"] == "LOCATION"
-                    for item in st.session_state.evidence
+                    for item in
+                    st.session_state.evidence
                 )
 
-                if not already_location:
+                if not location_exists:
 
                     add_evidence(
                         "LOCATION",
@@ -886,16 +1106,16 @@ else:
                     "✅ Location captured successfully."
                 )
 
-                col1, col2 = st.columns(2)
+                c1, c2 = st.columns(2)
 
-                with col1:
+                with c1:
 
                     st.metric(
                         "📍 Latitude",
                         str(latitude)
                     )
 
-                with col2:
+                with c2:
 
                     st.metric(
                         "📍 Longitude",
@@ -924,16 +1144,15 @@ else:
             else:
 
                 st.info(
-                    "📍 Your browser has not returned a location yet. "
-                    "Allow location access and press "
-                    "📍 CAPTURE MY LOCATION again."
+                    "📍 Allow location access in your browser, "
+                    "then press 📍 CAPTURE MY LOCATION again."
                 )
 
         else:
 
             st.error(
                 "📍 Location component unavailable. "
-                "Make sure streamlit-geolocation is installed."
+                "Check requirements.txt."
             )
 
 
@@ -968,7 +1187,9 @@ else:
         video = webrtc_streamer(
             key=(
                 "safeher_video_"
-                + str(st.session_state.incident_id)
+                + str(
+                    st.session_state.incident_id
+                )
             ),
 
             mode=WebRtcMode.SENDRECV,
@@ -1005,7 +1226,7 @@ else:
 
         st.error(
             "🎥 Video component unavailable. "
-            "Check streamlit-webrtc and av in requirements.txt."
+            "Check streamlit-webrtc and av."
         )
 
 
