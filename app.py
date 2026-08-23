@@ -23,14 +23,79 @@ st.set_page_config(page_title="SafeHer AI", page_icon="🌸", layout="wide")
 
 st.markdown("""
 <style>
-.stApp{background:linear-gradient(135deg,#fff8fc,#f8f3ff,#eef7ff)}
-.block-container{max-width:1250px;padding-top:25px}
-.hero{padding:30px;border-radius:28px;background:linear-gradient(135deg,#ff5f9e,#a66cff);color:white;box-shadow:0 12px 35px rgba(150,80,160,.18);margin-bottom:22px}
-.hero h1{margin:0;font-size:44px}.hero p{font-size:18px}
-.card{background:rgba(255,255,255,.9);border:1px solid #eadcf0;border-radius:20px;padding:20px;margin-bottom:16px}
-.incident{background:#fff0f4;border:2px solid #ff8cad;border-radius:18px;padding:16px;margin-bottom:18px}
-.evidence{background:white;border-left:5px solid #b16cff;border-radius:14px;padding:14px;margin-bottom:12px}
-.footer{text-align:center;color:#888;padding:30px}
+.stApp{
+    background:linear-gradient(135deg,#fff8fc,#f8f3ff,#eef7ff);
+    color:#222222;
+}
+
+.block-container{
+    max-width:1250px;
+    padding-top:25px;
+}
+
+.hero{
+    padding:30px;
+    border-radius:28px;
+    background:linear-gradient(135deg,#ff5f9e,#a66cff);
+    color:white;
+    box-shadow:0 12px 35px rgba(166,108,255,.25);
+}
+
+.hero h1{
+    margin:0;
+    font-size:44px;
+    color:white;
+}
+
+.hero p{
+    font-size:18px;
+    color:white;
+}
+
+.card{
+    background:rgba(255,255,255,.95);
+    border:1px solid #eadcf0;
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:16px;
+    color:#222222;
+}
+
+.incident{
+    background:#fff0f4;
+    border:2px solid #ff8cad;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:18px;
+    color:#222222;
+}
+
+.evidence{
+    background:white;
+    border-left:5px solid #b16cff;
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:12px;
+    color:#222222;
+}
+
+.footer{
+    text-align:center;
+    color:#555555;
+    padding:30px;
+}
+
+p, span, label, div{
+    color:#222222;
+}
+
+button{
+    color:#222222 !important;
+}
+
+h1, h2, h3, h4, h5, h6{
+    color:#222222;
+}
 </style>
 """, unsafe_allow_html=True)
 
