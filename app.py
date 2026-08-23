@@ -374,33 +374,45 @@ else:
 
     st.header("🎥 Emergency Video Capture")
 
-    if VIDEO_AVAILABLE:
+  if VIDEO_AVAILABLE:
 
-        rtc = RTCConfiguration({
-            "iceServers": [
-                {
-                    "urls": [
-                        "stun:stun.l.google.com:19302"
-                    ]
-                }
-            ]
-        })
+    st.info("🎥 Click START below to activate the emergency camera.")
 
-        webrtc_streamer(
-            key="safeher-" + st.session_state.incident_id,
-            mode=WebRtcMode.SENDRECV,
-            rtc_configuration=rtc,
-            media_stream_constraints={
-                "video": True,
-                "audio": True
-            },
-            async_processing=True
-        )
+    rtc = RTCConfiguration({
+        "iceServers": [
+            {
+                "urls": [
+                    "stun:stun.l.google.com:19302"
+                ]
+            }
+        ]
+    })
 
-        st.info(
-            "Allow camera/microphone permission when the browser asks. "
-            "The live stream is active during the incident."
-        )
+    ctx = webrtc_streamer(
+        key="safeher-video-" + st.session_state.incident_id,
+        mode=WebRtcMode.SENDRECV,
+        rtc_configuration=rtc,
+        media_stream_constraints={
+            "video": True,
+            "audio": True
+        },
+        async_processing=True,
+        media_toggle_controls=True
+    )
+
+    if ctx.state.playing:
+        st.success("🔴 Emergency camera is ACTIVE.")
+    else:
+        st.warning("⏸️ Camera is waiting to be started.")
+
+    st.caption(
+        "When the browser asks for camera/microphone permission, select Allow."
+    )
+
+else:
+    st.error(
+        "Video component unavailable. Check streamlit-webrtc and av in requirements.txt."
+    )
 
     else:
         st.warning(
