@@ -370,49 +370,47 @@ else:
     # =========================
     # VIDEO
     # =========================
-    st.divider()
-
+       st.divider()
     st.header("🎥 Emergency Video Capture")
 
-  if VIDEO_AVAILABLE:
+    if VIDEO_AVAILABLE:
+        st.info("🎥 Click START below to activate the emergency camera.")
 
-    st.info("🎥 Click START below to activate the emergency camera.")
+        rtc = RTCConfiguration({
+            "iceServers": [
+                {
+                    "urls": [
+                        "stun:stun.l.google.com:19302"
+                    ]
+                }
+            ]
+        })
 
-    rtc = RTCConfiguration({
-        "iceServers": [
-            {
-                "urls": [
-                    "stun:stun.l.google.com:19302"
-                ]
-            }
-        ]
-    })
+        ctx = webrtc_streamer(
+            key="safeher-video-" + st.session_state.incident_id,
+            mode=WebRtcMode.SENDRECV,
+            rtc_configuration=rtc,
+            media_stream_constraints={
+                "video": True,
+                "audio": True
+            },
+            async_processing=True,
+            media_toggle_controls=True
+        )
 
-    ctx = webrtc_streamer(
-        key="safeher-video-" + st.session_state.incident_id,
-        mode=WebRtcMode.SENDRECV,
-        rtc_configuration=rtc,
-        media_stream_constraints={
-            "video": True,
-            "audio": True
-        },
-        async_processing=True,
-        media_toggle_controls=True
-    )
+        if ctx.state.playing:
+            st.success("🔴 Emergency camera is ACTIVE.")
+        else:
+            st.warning("⏸️ Camera is waiting to be started.")
 
-    if ctx.state.playing:
-        st.success("🔴 Emergency camera is ACTIVE.")
+        st.caption(
+            "When the browser asks for camera/microphone permission, select Allow."
+        )
+
     else:
-        st.warning("⏸️ Camera is waiting to be started.")
-
-    st.caption(
-        "When the browser asks for camera/microphone permission, select Allow."
-    )
-
-else:
-    st.error(
-        "Video component unavailable. Check streamlit-webrtc and av in requirements.txt."
-    )
+        st.error(
+            "Video component unavailable. Check streamlit-webrtc and av in requirements.txt."
+        )
 
     else:
         st.warning(
