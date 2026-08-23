@@ -27,14 +27,13 @@ except Exception:
 
 
 # ============================================================
-# PAGE CONFIG
+# PAGE
 # ============================================================
 
 st.set_page_config(
     page_title="SafeHer AI",
     page_icon="🌸",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="wide"
 )
 
 
@@ -43,258 +42,140 @@ st.set_page_config(
 # ============================================================
 
 BASE_DIR = Path("safeher_evidence")
-BASE_DIR.mkdir(parents=True, exist_ok=True)
+BASE_DIR.mkdir(exist_ok=True)
 
 
 # ============================================================
-# COMPLETE LIGHT UI
+# LIGHT THEME
 # ============================================================
 
 st.markdown(
     """
     <style>
 
-    /* ========================================================
-       GLOBAL
-       ======================================================== */
-
     .stApp {
-        background: #fff7fc !important;
-        color: #333333 !important;
+        background-color: #fff7fc;
     }
 
-    .main {
-        background: #fff7fc !important;
-    }
-
-    /* EVERYTHING TEXT */
-
-    .stApp,
+    /* Normal text */
     .stApp p,
-    .stApp span,
     .stApp label,
-    .stApp div,
     .stApp h1,
     .stApp h2,
     .stApp h3,
     .stApp h4,
     .stApp h5,
     .stApp h6 {
-        color: #333333;
-    }
-
-    /* ========================================================
-       HEADINGS
-       ======================================================== */
-
-    h1, h2, h3, h4, h5, h6 {
         color: #333333 !important;
     }
 
-    /* ========================================================
-       HERO
-       ======================================================== */
-
+    /* Hero */
     .safeher-hero {
         background: linear-gradient(
             135deg,
             #ff5fa2,
-            #c56cff,
-            #7b61ff
-        ) !important;
-
-        padding: 30px;
-        border-radius: 25px;
+            #c56cff
+        );
+        padding: 28px;
+        border-radius: 24px;
         text-align: center;
-        margin-bottom: 25px;
-
-        box-shadow:
-            0 10px 30px
-            rgba(190, 80, 160, 0.18);
+        margin-bottom: 24px;
     }
 
     .safeher-hero h1 {
-        color: #ffffff !important;
-        font-size: 42px !important;
-        margin: 0 !important;
+        color: white !important;
+        margin: 0;
+        font-size: 42px;
     }
 
     .safeher-hero p {
-        color: #ffffff !important;
-        font-size: 17px !important;
-        margin-top: 8px !important;
+        color: white !important;
+        margin-top: 8px;
     }
 
-    /* ========================================================
-       INCIDENT BOX
-       ======================================================== */
-
+    /* Incident */
     .incident-box {
-        background: #fff0f6 !important;
-        border: 2px solid #ff8fbd;
-        border-radius: 18px;
-        padding: 16px;
-        margin-bottom: 20px;
+        background: #fff0f6;
+        border: 2px solid #ff9ac4;
+        border-radius: 16px;
+        padding: 15px;
+        margin-bottom: 18px;
     }
 
-    .incident-box,
     .incident-box * {
         color: #333333 !important;
     }
 
-    /* ========================================================
-       CARDS
-       ======================================================== */
-
-    .safeher-card {
-        background: #ffffff !important;
-        border-radius: 20px;
-        padding: 22px;
-        margin: 15px 0;
-        box-shadow:
-            0 5px 18px
-            rgba(130, 80, 140, 0.08);
+    /* Evidence */
+    .evidence-box {
+        background: #ffffff;
+        border-left: 5px solid #ff69a6;
+        border-radius: 12px;
+        padding: 14px;
+        margin: 10px 0;
+        box-shadow: 0 3px 12px rgba(100, 50, 100, 0.08);
     }
 
-    .safeher-card,
-    .safeher-card * {
+    .evidence-box * {
         color: #333333 !important;
     }
 
-    /* ========================================================
-       TEXT AREA
-       ======================================================== */
-
-    [data-testid="stTextArea"] textarea {
-        background: #ffffff !important;
+    /* Text area */
+    textarea {
+        background-color: #ffffff !important;
         color: #222222 !important;
-        border: 2px solid #e5c9dc !important;
+        border: 2px solid #e4c5d8 !important;
         border-radius: 12px !important;
-        caret-color: #222222 !important;
     }
 
-    [data-testid="stTextArea"] textarea::placeholder {
+    textarea::placeholder {
         color: #777777 !important;
-        opacity: 1 !important;
     }
 
-    [data-testid="stTextArea"] label {
-        color: #333333 !important;
-    }
-
-    /* ========================================================
-       TEXT INPUTS
-       ======================================================== */
-
-    [data-testid="stTextInput"] input {
-        background: #ffffff !important;
-        color: #222222 !important;
-        border: 2px solid #e5c9dc !important;
-    }
-
-    /* ========================================================
-       ALL BUTTONS
-       ======================================================== */
-
+    /* Buttons */
     .stButton > button {
-        background: #ffffff !important;
+        background-color: #ffffff !important;
         color: #333333 !important;
-        border: 2px solid #e4b8d2 !important;
+        border: 2px solid #e2b8d0 !important;
         border-radius: 12px !important;
         font-weight: 700 !important;
-        min-height: 45px !important;
     }
 
     .stButton > button:hover {
-        background: #fff0f7 !important;
+        background-color: #fff0f7 !important;
         color: #222222 !important;
         border-color: #ff69a6 !important;
     }
 
-    /* PRIMARY SOS */
-
+    /* Primary button */
     .stButton > button[kind="primary"] {
         background: linear-gradient(
             135deg,
             #ff4f91,
-            #d95cff
+            #d65cff
         ) !important;
-
-        color: #ffffff !important;
+        color: white !important;
         border: none !important;
     }
 
-    .stButton > button[kind="primary"]:hover {
-        color: #ffffff !important;
-    }
-
-    /* ========================================================
-       RESPONDER BUTTON
-       ======================================================== */
-
-    .responder-button {
-        background: linear-gradient(
-            135deg,
-            #ff5fa2,
-            #c56cff
-        ) !important;
-
-        color: #ffffff !important;
-
-        border-radius: 14px;
-
-        padding: 14px 20px;
-
-        text-align: center;
-
-        font-size: 16px;
-
-        font-weight: 700;
-
-        margin: 10px 0;
-    }
-
-    /* ========================================================
-       CAMERA INPUT
-       ======================================================== */
-
+    /* Camera */
     [data-testid="stCameraInput"] {
         background: #ffffff !important;
-        border: 2px solid #ead1df !important;
-        border-radius: 15px !important;
-        padding: 10px !important;
+        border: 2px solid #ead2df !important;
+        border-radius: 14px !important;
+        padding: 8px !important;
     }
 
+    /* Camera text */
     [data-testid="stCameraInput"] * {
         color: #333333 !important;
     }
 
-    /* Camera buttons */
-
-    [data-testid="stCameraInput"] button {
-        background: #ffffff !important;
-        color: #333333 !important;
-        border: 2px solid #e4b8d2 !important;
-    }
-
-    /* ========================================================
-       GEOLOCATION COMPONENT
-       ======================================================== */
-
-    [data-testid="stCustomComponentV1"] {
-        background: #ffffff !important;
-        color: #333333 !important;
-    }
-
-    /* ========================================================
-       METRICS
-       ======================================================== */
-
+    /* Metric */
     [data-testid="stMetric"] {
         background: #ffffff !important;
-        border: 2px solid #ead1df !important;
-        border-radius: 14px !important;
-        padding: 10px !important;
+        border: 1px solid #ead2df !important;
+        border-radius: 12px !important;
     }
 
     [data-testid="stMetricLabel"] {
@@ -305,85 +186,20 @@ st.markdown(
         color: #333333 !important;
     }
 
-    /* ========================================================
-       INFO / SUCCESS / WARNING / ERROR
-       ======================================================== */
+    /* Expander */
+    [data-testid="stExpander"] {
+        background: #ffffff !important;
+        border: 1px solid #ead2df !important;
+        border-radius: 12px !important;
+    }
 
+    /* Alerts */
     [data-testid="stAlert"] {
         color: #333333 !important;
     }
 
-    [data-testid="stAlert"] p,
-    [data-testid="stAlert"] span {
+    [data-testid="stAlert"] p {
         color: #333333 !important;
-    }
-
-    /* ========================================================
-       EVIDENCE
-       ======================================================== */
-
-    .evidence-box {
-        background: #ffffff !important;
-
-        border-left: 5px solid #ff69a6;
-
-        border-radius: 14px;
-
-        padding: 14px;
-
-        margin: 10px 0;
-
-        box-shadow:
-            0 4px 14px
-            rgba(120, 70, 130, 0.08);
-    }
-
-    .evidence-box,
-    .evidence-box * {
-        color: #333333 !important;
-    }
-
-    /* ========================================================
-       EXPANDERS
-       ======================================================== */
-
-    [data-testid="stExpander"] {
-        background: #ffffff !important;
-        border: 2px solid #ead1df !important;
-        border-radius: 14px !important;
-    }
-
-    [data-testid="stExpander"] * {
-        color: #333333 !important;
-    }
-
-    /* ========================================================
-       CODE / RESPONDER LINK
-       ======================================================== */
-
-    code {
-        color: #333333 !important;
-        background: #f5eaf2 !important;
-    }
-
-    /* ========================================================
-       CAPTION
-       ======================================================== */
-
-    [data-testid="stCaptionContainer"] {
-        color: #666666 !important;
-    }
-
-    [data-testid="stCaptionContainer"] * {
-        color: #666666 !important;
-    }
-
-    /* ========================================================
-       DIVIDER
-       ======================================================== */
-
-    hr {
-        border-color: #ead1df !important;
     }
 
     </style>
@@ -396,39 +212,32 @@ st.markdown(
 # SESSION STATE
 # ============================================================
 
-if "incident_active" not in st.session_state:
-    st.session_state.incident_active = False
+defaults = {
+    "incident_active": False,
+    "incident_id": None,
+    "incident_started": None,
+    "sos_message": "",
+    "evidence": [],
+    "location_requested": False,
+    "ai_result": None,
+}
 
-if "incident_id" not in st.session_state:
-    st.session_state.incident_id = None
-
-if "incident_started" not in st.session_state:
-    st.session_state.incident_started = None
-
-if "sos_message" not in st.session_state:
-    st.session_state.sos_message = ""
-
-if "evidence" not in st.session_state:
-    st.session_state.evidence = []
-
-if "location_requested" not in st.session_state:
-    st.session_state.location_requested = False
-
-if "ai_result" not in st.session_state:
-    st.session_state.ai_result = None
+for key, value in defaults.items():
+    if key not in st.session_state:
+        st.session_state[key] = value
 
 
 # ============================================================
 # FUNCTIONS
 # ============================================================
 
-def current_time():
+def now():
     return datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S"
     )
 
 
-def clean_filename(value):
+def safe_name(value):
     return re.sub(
         r"[^A-Za-z0-9_.-]",
         "_",
@@ -436,14 +245,13 @@ def clean_filename(value):
     )
 
 
-def get_incident_folder():
-
+def folder():
     if not st.session_state.incident_id:
         return BASE_DIR
 
     path = (
         BASE_DIR
-        / clean_filename(
+        / safe_name(
             st.session_state.incident_id
         )
     )
@@ -461,7 +269,7 @@ def save_manifest():
     if not st.session_state.incident_id:
         return
 
-    data = {
+    manifest = {
         "incident_id":
             st.session_state.incident_id,
 
@@ -469,20 +277,17 @@ def save_manifest():
             st.session_state.incident_started,
 
         "updated":
-            current_time(),
+            now(),
 
         "evidence":
             st.session_state.evidence
     }
 
-    file_path = (
-        get_incident_folder()
-        / "evidence_manifest.json"
-    )
+    file = folder() / "evidence_manifest.json"
 
-    file_path.write_text(
+    file.write_text(
         json.dumps(
-            data,
+            manifest,
             indent=2
         ),
         encoding="utf-8"
@@ -497,7 +302,7 @@ def add_evidence(
 
     item = {
         "type": evidence_type,
-        "timestamp": current_time(),
+        "timestamp": now(),
         "incident_id":
             st.session_state.incident_id,
         "description":
@@ -506,9 +311,7 @@ def add_evidence(
             str(file_path)
     }
 
-    st.session_state.evidence.append(
-        item
-    )
+    st.session_state.evidence.append(item)
 
     save_manifest()
 
@@ -524,14 +327,8 @@ def start_incident():
         + uuid.uuid4().hex[:6].upper()
     )
 
-    st.session_state.incident_id = (
-        incident_id
-    )
-
-    st.session_state.incident_started = (
-        current_time()
-    )
-
+    st.session_state.incident_id = incident_id
+    st.session_state.incident_started = now()
     st.session_state.incident_active = True
 
     st.session_state.sos_message = (
@@ -539,21 +336,18 @@ def start_incident():
     )
 
     st.session_state.evidence = []
-
     st.session_state.location_requested = False
-
     st.session_state.ai_result = None
 
-    get_incident_folder()
-
+    folder()
     save_manifest()
 
 
-def classify_situation(text):
+def classify(text):
 
     text = text.lower()
 
-    high_risk = [
+    high = [
         "attack",
         "attacking",
         "weapon",
@@ -570,7 +364,7 @@ def classify_situation(text):
         "following me"
     ]
 
-    medium_risk = [
+    medium = [
         "stalking",
         "stalker",
         "unsafe",
@@ -583,21 +377,13 @@ def classify_situation(text):
         "following"
     ]
 
-    if any(
-        word in text
-        for word in high_risk
-    ):
-
+    if any(word in text for word in high):
         return (
             "HIGH RISK",
             "The description contains indicators of a potentially immediate safety threat."
         )
 
-    if any(
-        word in text
-        for word in medium_risk
-    ):
-
+    if any(word in text for word in medium):
         return (
             "MEDIUM RISK",
             "The description suggests a potentially unsafe situation."
@@ -610,7 +396,7 @@ def classify_situation(text):
 
 
 # ============================================================
-# RESPONDER MODE
+# RESPONDER DASHBOARD
 # ============================================================
 
 if st.query_params.get("mode") == "responder":
@@ -618,20 +404,14 @@ if st.query_params.get("mode") == "responder":
     st.markdown(
         """
         <div class="safeher-hero">
-            <h1>🛡️ SafeHer AI</h1>
-            <p>
-                Authorized Responder Dashboard
-            </p>
+            <h1>🌸 SafeHer AI</h1>
+            <p>Authorized Responder Dashboard</p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    responder_key = st.query_params.get(
-        "key"
-    )
-
-    if responder_key != "safeher-demo":
+    if st.query_params.get("key") != "safeher-demo":
 
         st.error(
             "🔐 Unauthorized responder access."
@@ -641,12 +421,10 @@ if st.query_params.get("mode") == "responder":
             "⬅️ Back to SafeHer AI",
             key="responder_back"
         ):
-
             st.query_params.clear()
             st.rerun()
 
         st.stop()
-
 
     st.success(
         "✅ Authorized responder access granted."
@@ -656,105 +434,89 @@ if st.query_params.get("mode") == "responder":
         "🚨 Emergency Incidents"
     )
 
-    incident_folders = sorted(
+    incidents = sorted(
         [
-            item
-            for item in BASE_DIR.iterdir()
-            if item.is_dir()
+            x for x in BASE_DIR.iterdir()
+            if x.is_dir()
         ],
         reverse=True
     )
 
-    if not incident_folders:
+    if not incidents:
 
         st.info(
             "No incident evidence has been recorded yet."
         )
 
-    else:
+    for incident in incidents:
 
-        for incident_folder in incident_folders:
+        manifest_file = (
+            incident
+            / "evidence_manifest.json"
+        )
 
-            manifest_file = (
-                incident_folder
-                / "evidence_manifest.json"
+        if not manifest_file.exists():
+            continue
+
+        try:
+            manifest = json.loads(
+                manifest_file.read_text(
+                    encoding="utf-8"
+                )
+            )
+        except Exception:
+            manifest = {}
+
+        incident_id = manifest.get(
+            "incident_id",
+            incident.name
+        )
+
+        with st.expander(
+            f"🚨 {incident_id}"
+        ):
+
+            st.write(
+                "🕒 Started:",
+                manifest.get(
+                    "incident_started",
+                    "Unknown"
+                )
             )
 
-            if not manifest_file.exists():
-                continue
-
-            try:
-
-                manifest = json.loads(
-                    manifest_file.read_text(
-                        encoding="utf-8"
-                    )
-                )
-
-            except Exception:
-
-                manifest = {}
-
-            incident_id = manifest.get(
-                "incident_id",
-                incident_folder.name
+            evidence = manifest.get(
+                "evidence",
+                []
             )
 
-            with st.expander(
-                f"🚨 {incident_id}"
-            ):
-
-                st.write(
-                    "🕒 Started:",
-                    manifest.get(
-                        "incident_started",
-                        "Unknown"
-                    )
+            if not evidence:
+                st.info(
+                    "No evidence captured."
                 )
 
-                evidence = manifest.get(
-                    "evidence",
-                    []
+            for item in evidence:
+
+                st.markdown(
+                    f"""
+                    <div class="evidence-box">
+                    <b>#{item.get("type", "")}</b>
+                    <br>
+                    🕒 {item.get("timestamp", "")}
+                    <br>
+                    🆔 {item.get("incident_id", "")}
+                    <br>
+                    📝 {item.get("description", "")}
+                    <br>
+                    📁 {item.get("file", "")}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
                 )
-
-                if not evidence:
-
-                    st.info(
-                        "No evidence captured."
-                    )
-
-                for item in evidence:
-
-                    st.markdown(
-                        f"""
-                        <div class="evidence-box">
-
-                        <b>
-                            {item.get("type", "")}
-                        </b>
-                        <br>
-
-                        🕒 {item.get("timestamp", "")}
-                        <br>
-
-                        🆔 {item.get("incident_id", "")}
-                        <br>
-
-                        📝 {item.get("description", "")}
-                        <br>
-
-                        📁 {item.get("file", "")}
-
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
 
     if st.button(
         "⬅️ Back to SafeHer AI",
         key="responder_back_dashboard"
     ):
-
         st.query_params.clear()
         st.rerun()
 
@@ -762,21 +524,18 @@ if st.query_params.get("mode") == "responder":
 
 
 # ============================================================
-# HERO
+# MAIN DASHBOARD
 # ============================================================
 
 st.markdown(
     """
     <div class="safeher-hero">
-
         <h1>🌸 SafeHer AI</h1>
-
         <p>
             AI-assisted personal safety,
             emergency evidence capture
             and responder support
         </p>
-
     </div>
     """,
     unsafe_allow_html=True
@@ -792,15 +551,9 @@ if st.session_state.incident_active:
     st.markdown(
         f"""
         <div class="incident-box">
-
-            🚨 <b>INCIDENT ACTIVE</b>
-            <br>
-
-            🆔 {st.session_state.incident_id}
-            <br>
-
+            🚨 <b>INCIDENT ACTIVE</b><br>
+            🆔 {st.session_state.incident_id}<br>
             🕒 {st.session_state.incident_started}
-
         </div>
         """,
         unsafe_allow_html=True
@@ -820,14 +573,11 @@ else:
 st.markdown(
     """
     <div class="safeher-card">
-
         <h2>🚨 Emergency SOS</h2>
-
         <p>
             Creates a unique incident and enables
             emergency evidence capture.
         </p>
-
     </div>
     """,
     unsafe_allow_html=True
@@ -844,7 +594,6 @@ if st.button(
     if not st.session_state.incident_active:
 
         start_incident()
-
         st.rerun()
 
     else:
@@ -855,7 +604,6 @@ if st.button(
 
 
 if st.session_state.sos_message:
-
     st.warning(
         st.session_state.sos_message
     )
@@ -873,16 +621,12 @@ st.header(
 if not st.session_state.incident_active:
 
     st.info(
-        "Activate SOS first to enable evidence capture."
+        "Activate SOS first."
     )
-
 
 else:
 
-    evidence_folder = (
-        get_incident_folder()
-    )
-
+    incident_folder = folder()
 
     # ========================================================
     # SNAPSHOT
@@ -893,24 +637,24 @@ else:
     )
 
     st.caption(
-        "Capture a photo as emergency evidence."
+        "Capture an emergency photo."
     )
 
-    left, center, right = st.columns(
+    left, camera_col, right = st.columns(
         [1, 2, 1]
     )
 
-    with center:
+    with camera_col:
 
-        snapshot = st.camera_input(
+        snap = st.camera_input(
             "Take emergency snapshot",
-            key="safeher_final_snapshot"
+            key="safeher_snapshot_final"
         )
 
-    if snapshot is not None:
+    if snap is not None:
 
-        snapshot_file = (
-            evidence_folder
+        file = (
+            incident_folder
             / (
                 st.session_state.incident_id
                 + "_snapshot_"
@@ -921,14 +665,14 @@ else:
             )
         )
 
-        snapshot_file.write_bytes(
-            snapshot.getvalue()
+        file.write_bytes(
+            snap.getvalue()
         )
 
         add_evidence(
             "SNAPSHOT",
-            snapshot_file,
-            "Emergency snapshot captured."
+            file,
+            "Camera snapshot captured during active incident."
         )
 
         st.success(
@@ -947,17 +691,16 @@ else:
     )
 
     st.caption(
-        "Capture your current GPS location."
+        "Capture your current location."
     )
 
     if st.button(
         "📍 CAPTURE MY LOCATION",
         use_container_width=True,
-        key="safeher_final_location"
+        key="safeher_location_final"
     ):
 
         st.session_state.location_requested = True
-
         st.rerun()
 
 
@@ -985,26 +728,21 @@ else:
                     "accuracy"
                 )
 
-                location_data = {
-
+                data = {
                     "incident_id":
                         st.session_state.incident_id,
-
                     "timestamp":
-                        current_time(),
-
+                        now(),
                     "latitude":
                         latitude,
-
                     "longitude":
                         longitude,
-
                     "accuracy":
                         accuracy
                 }
 
                 location_file = (
-                    evidence_folder
+                    incident_folder
                     / (
                         st.session_state.incident_id
                         + "_location.json"
@@ -1013,19 +751,18 @@ else:
 
                 location_file.write_text(
                     json.dumps(
-                        location_data,
+                        data,
                         indent=2
                     ),
                     encoding="utf-8"
                 )
 
-                exists = any(
-                    item["type"] == "LOCATION"
-                    for item in
-                    st.session_state.evidence
+                already_exists = any(
+                    x["type"] == "LOCATION"
+                    for x in st.session_state.evidence
                 )
 
-                if not exists:
+                if not already_exists:
 
                     add_evidence(
                         "LOCATION",
@@ -1042,39 +779,33 @@ else:
                     "✅ Location captured successfully."
                 )
 
-                col1, col2 = st.columns(2)
+                c1, c2 = st.columns(2)
 
-                with col1:
-
+                with c1:
                     st.metric(
                         "📍 Latitude",
                         str(latitude)
                     )
 
-                with col2:
-
+                with c2:
                     st.metric(
                         "📍 Longitude",
                         str(longitude)
                     )
 
                 if accuracy is not None:
-
                     st.caption(
                         f"🎯 Accuracy: {accuracy} meters"
                     )
 
                 try:
-
                     st.map(
                         {
                             "latitude": [latitude],
                             "longitude": [longitude]
                         }
                     )
-
                 except Exception:
-
                     pass
 
             else:
@@ -1102,17 +833,13 @@ else:
         "🎥 Emergency Video Capture"
     )
 
-    st.caption(
-        "Camera recording is available below."
-    )
-
     if VIDEO_AVAILABLE:
 
         st.info(
-            "🎥 Press START below to activate the camera."
+            "🎥 Press START below to activate the emergency camera."
         )
 
-        rtc_configuration = RTCConfiguration(
+        rtc = RTCConfiguration(
             {
                 "iceServers": [
                     {
@@ -1124,28 +851,22 @@ else:
             }
         )
 
-        video_context = webrtc_streamer(
-
+        ctx = webrtc_streamer(
             key=(
-                "safeher_final_video_"
+                "safeher_video_"
                 + st.session_state.incident_id
             ),
-
             mode=WebRtcMode.SENDRECV,
-
-            rtc_configuration=rtc_configuration,
-
+            rtc_configuration=rtc,
             media_stream_constraints={
                 "video": True,
                 "audio": False
             },
-
             async_processing=True,
-
             media_toggle_controls=True
         )
 
-        if video_context.state.playing:
+        if ctx.state.playing:
 
             st.success(
                 "🔴 Emergency camera is ACTIVE."
@@ -1158,7 +879,7 @@ else:
             )
 
         st.caption(
-            "Camera only. Microphone permission is not requested."
+            "Camera only. Microphone is disabled."
         )
 
     else:
@@ -1198,27 +919,15 @@ else:
         st.markdown(
             f"""
             <div class="evidence-box">
-
-                <b>
-                    #{number} {item["type"]}
-                </b>
-
+                <b>#{number} {item["type"]}</b>
                 <br>
-
                 🕒 {item["timestamp"]}
-
                 <br>
-
                 🆔 {item["incident_id"]}
-
                 <br>
-
                 📝 {item["description"]}
-
                 <br>
-
                 📁 {item["file"]}
-
             </div>
             """,
             unsafe_allow_html=True
@@ -1239,21 +948,19 @@ description = st.text_area(
         "Example: Someone has been following me "
         "for the last 10 minutes..."
     ),
-    key="safeher_final_ai"
+    key="safeher_ai_description"
 )
 
 
 if st.button(
-    "🤖 ANALYZE SAFETY SITUATION",
-    key="safeher_final_ai_button"
+    "🤖 Analyze Safety Situation",
+    key="safeher_ai_button"
 ):
 
     if description.strip():
 
         st.session_state.ai_result = (
-            classify_situation(
-                description
-            )
+            classify(description)
         )
 
     else:
@@ -1300,8 +1007,8 @@ st.header(
 if st.session_state.incident_active:
 
     if st.button(
-        "🛑 END INCIDENT",
-        key="safeher_final_end"
+        "🛑 End Incident",
+        key="safeher_end_incident"
     ):
 
         st.session_state.incident_active = False
@@ -1311,28 +1018,27 @@ if st.session_state.incident_active:
         )
 
         save_manifest()
-
         st.rerun()
 
 
 if st.session_state.incident_id:
 
-    manifest_file = (
-        get_incident_folder()
+    manifest = (
+        folder()
         / "evidence_manifest.json"
     )
 
-    if manifest_file.exists():
+    if manifest.exists():
 
         st.download_button(
-            "⬇️ DOWNLOAD INCIDENT MANIFEST",
-            manifest_file.read_bytes(),
+            "⬇️ Download Incident Manifest",
+            manifest.read_bytes(),
             file_name=(
                 st.session_state.incident_id
                 + "_manifest.json"
             ),
             mime="application/json",
-            key="safeher_final_download"
+            key="safeher_manifest_download"
         )
 
 
@@ -1346,29 +1052,19 @@ st.header(
     "🛡️ Responder Access"
 )
 
-st.markdown(
-    """
-    <div class="safeher-card">
-
-        <p>
-            Authorized responders can access the
-            SafeHer emergency evidence dashboard.
-        </p>
-
-    </div>
-    """,
-    unsafe_allow_html=True
+st.info(
+    "Authorized responders can access the "
+    "SafeHer emergency evidence dashboard."
 )
 
 
 if st.button(
-    "🛡️ OPEN RESPONDER DASHBOARD",
+    "🛡️ Open Responder Dashboard",
     use_container_width=True,
-    key="safeher_final_responder"
+    key="safeher_responder_button"
 ):
 
     st.query_params["mode"] = "responder"
-
     st.query_params["key"] = "safeher-demo"
 
     st.rerun()
