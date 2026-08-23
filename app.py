@@ -264,10 +264,10 @@ else:
     # =========================
     st.subheader("📷 Emergency Snapshot")
 
-snap = st.camera_input(
-    "Take emergency snapshot",
-    key="emergency_snapshot_camera"
-)
+    snap = st.camera_input(
+        "Take emergency snapshot",
+        key="emergency_snapshot_camera"
+    )
 
     if snap is not None:
         fp = p / f"{st.session_state.incident_id}_snapshot_{datetime.now():%Y%m%d_%H%M%S}.jpg"
