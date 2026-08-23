@@ -412,11 +412,6 @@ else:
             "Video component unavailable. Check streamlit-webrtc and av in requirements.txt."
         )
 
-    else:
-        st.warning(
-            "Video component unavailable. "
-            "Install streamlit-webrtc and av."
-        )
 
 st.header("📸 Emergency Evidence Capture")
 
