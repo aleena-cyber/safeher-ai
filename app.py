@@ -130,7 +130,6 @@ p, label, span {
     border-radius: 12px !important;
 }
 
-/* INPUT PLACEHOLDER */
 .stTextArea textarea::placeholder {
     color: #777777 !important;
 }
