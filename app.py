@@ -370,7 +370,7 @@ else:
     # =========================
     # VIDEO
     # =========================
-        st.divider()
+    st.divider()
     st.header("🎥 Emergency Video Capture")
 
     if VIDEO_AVAILABLE:
