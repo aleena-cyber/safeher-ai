@@ -264,7 +264,7 @@ else:
     # =========================
     st.subheader("📷 Emergency Snapshot")
 
-   snap = st.camera_input(
+snap = st.camera_input(
     "Take emergency snapshot",
     key="emergency_snapshot_camera"
 )
