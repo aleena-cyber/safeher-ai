@@ -22,7 +22,6 @@ except Exception:
 st.set_page_config(page_title="SafeHer AI", page_icon="🌸", layout="wide")
 
 st.markdown("""
-st.markdown("""
 <style>
 
 /* SAFEHER BACKGROUND */
@@ -141,8 +140,6 @@ p, label, span {
     padding: 30px;
 }
 
-</style>
-""", unsafe_allow_html=True)
 </style>
 """, unsafe_allow_html=True)
 
