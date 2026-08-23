@@ -5,8 +5,9 @@ import json
 import uuid
 import re
 
+
 # =========================================================
-# OPTIONAL COMPONENTS
+# OPTIONAL PACKAGES
 # =========================================================
 
 try:
@@ -14,6 +15,7 @@ try:
     GEO_AVAILABLE = True
 except Exception:
     GEO_AVAILABLE = False
+
 
 try:
     from streamlit_webrtc import (
@@ -54,7 +56,7 @@ st.markdown(
     """
     <style>
 
-    /* ---------- MAIN APP ---------- */
+    /* MAIN BACKGROUND */
 
     .stApp {
         background: linear-gradient(
@@ -66,12 +68,12 @@ st.markdown(
         color: #333333 !important;
     }
 
-    /* Force normal Streamlit text to be dark */
+    /* NORMAL TEXT */
+
     .stApp p,
     .stApp span,
     .stApp label,
     .stApp small,
-    .stApp div,
     .stApp h1,
     .stApp h2,
     .stApp h3,
@@ -81,14 +83,14 @@ st.markdown(
         color: #333333 !important;
     }
 
-    /* ---------- HERO ---------- */
+    /* HERO */
 
     .hero {
         background: linear-gradient(
             135deg,
-            #ff5fa2 0%,
-            #c56cff 50%,
-            #7b61ff 100%
+            #ff5fa2,
+            #c56cff,
+            #7b61ff
         );
         padding: 30px;
         border-radius: 25px;
@@ -99,7 +101,7 @@ st.markdown(
 
     .hero h1,
     .hero p {
-        color: #ffffff !important;
+        color: white !important;
     }
 
     .hero h1 {
@@ -112,7 +114,22 @@ st.markdown(
         margin: 0;
     }
 
-    /* ---------- INCIDENT ---------- */
+    /* CARDS */
+
+    .card {
+        background: white;
+        padding: 22px;
+        border-radius: 20px;
+        margin: 15px 0;
+        box-shadow: 0 5px 18px rgba(130, 80, 140, 0.08);
+    }
+
+    .card h2,
+    .card p {
+        color: #333333 !important;
+    }
+
+    /* INCIDENT */
 
     .incident {
         background: #fff0f6;
@@ -123,29 +140,14 @@ st.markdown(
         color: #333333 !important;
     }
 
-    .incident * {
+    .incident b {
         color: #333333 !important;
     }
 
-    /* ---------- CARDS ---------- */
-
-    .card {
-        background: #ffffff;
-        padding: 22px;
-        border-radius: 20px;
-        margin: 15px 0;
-        box-shadow: 0 5px 18px rgba(130, 80, 140, 0.08);
-        color: #333333 !important;
-    }
-
-    .card * {
-        color: #333333 !important;
-    }
-
-    /* ---------- EVIDENCE ---------- */
+    /* EVIDENCE */
 
     .evidence {
-        background: #ffffff;
+        background: white;
         border-left: 5px solid #ff69a6;
         border-radius: 14px;
         padding: 14px;
@@ -154,26 +156,17 @@ st.markdown(
         color: #333333 !important;
     }
 
-    .evidence * {
+    .evidence b,
+    .evidence br {
         color: #333333 !important;
     }
 
-    /* ---------- SMALL CAMERA ---------- */
+    /* INPUTS */
 
-    .small-camera {
-        max-width: 430px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    /* ---------- TEXT INPUTS ---------- */
-
-    .stTextInput input,
     .stTextArea textarea,
-    .stNumberInput input {
+    .stTextInput input {
         color: #333333 !important;
-        background-color: #ffffff !important;
-        border: 1px solid #dddddd !important;
+        background: white !important;
     }
 
     .stTextArea textarea::placeholder,
@@ -181,49 +174,32 @@ st.markdown(
         color: #777777 !important;
     }
 
-    /* ---------- SELECTBOX / INPUT TEXT ---------- */
+    /* METRICS */
 
-    [data-baseweb="select"] {
-        color: #333333 !important;
-        background-color: #ffffff !important;
-    }
-
-    [data-baseweb="select"] * {
+    [data-testid="stMetricLabel"],
+    [data-testid="stMetricValue"] {
         color: #333333 !important;
     }
 
-    /* ---------- BUTTON TEXT ---------- */
+    /* CAPTION */
 
-    .stButton button {
-        font-weight: 700 !important;
-    }
-
-    /* ---------- ALERTS ---------- */
-
-    [data-testid="stAlert"] p,
-    [data-testid="stAlert"] span {
-        color: #333333 !important;
-    }
-
-    /* ---------- CAPTIONS ---------- */
-
-    .stCaption,
     [data-testid="stCaptionContainer"] {
         color: #555555 !important;
     }
 
-    /* ---------- METRICS ---------- */
+    /* SNAPSHOT AREA */
 
-    [data-testid="stMetricLabel"],
-    [data-testid="stMetricValue"],
-    [data-testid="stMetricDelta"] {
+    .snapshot-title {
+        text-align: center;
         color: #333333 !important;
+        font-weight: 700;
+        margin-bottom: 8px;
     }
 
-    /* ---------- DIVIDERS ---------- */
+    /* BUTTONS */
 
-    hr {
-        border-color: #ead7e6 !important;
+    .stButton button {
+        font-weight: 700 !important;
     }
 
     </style>
@@ -259,11 +235,13 @@ if "location_requested" not in st.session_state:
 
 
 # =========================================================
-# HELPER FUNCTIONS
+# FUNCTIONS
 # =========================================================
 
 def now():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
 
 def safe_filename(value):
@@ -280,7 +258,9 @@ def folder():
 
     incident_folder = (
         BASE_DIR
-        / safe_filename(st.session_state.incident_id)
+        / safe_filename(
+            st.session_state.incident_id
+        )
     )
 
     incident_folder.mkdir(
@@ -340,7 +320,9 @@ def start_incident():
 
     incident_id = (
         "SH-"
-        + datetime.now().strftime("%Y%m%d-%H%M%S")
+        + datetime.now().strftime(
+            "%Y%m%d-%H%M%S"
+        )
         + "-"
         + uuid.uuid4().hex[:6].upper()
     )
@@ -374,7 +356,7 @@ def classify(description):
 
     text = description.lower()
 
-    high_risk_words = [
+    high_words = [
         "attack",
         "attacking",
         "weapon",
@@ -392,7 +374,7 @@ def classify(description):
         "dangerous"
     ]
 
-    medium_risk_words = [
+    medium_words = [
         "stalking",
         "stalker",
         "unsafe",
@@ -405,7 +387,7 @@ def classify(description):
         "following"
     ]
 
-    for word in high_risk_words:
+    for word in high_words:
 
         if word in text:
 
@@ -414,7 +396,7 @@ def classify(description):
                 "The description contains indicators of a potentially immediate safety threat."
             )
 
-    for word in medium_risk_words:
+    for word in medium_words:
 
         if word in text:
 
@@ -438,8 +420,10 @@ if st.query_params.get("mode") == "responder":
     st.markdown(
         """
         <div class="hero">
-            <h1>🛡️ SafeHer AI</h1>
-            <p>Authorized Responder Dashboard</p>
+            <h1>🛡️ SafeHer AI Responder Dashboard</h1>
+            <p>
+                Authorized emergency evidence and incident view
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -459,7 +443,7 @@ if st.query_params.get("mode") == "responder":
         st.stop()
 
     st.success(
-        "✅ Responder demonstration access granted."
+        "✅ Responder access granted."
     )
 
     incident_folders = sorted(
@@ -474,13 +458,13 @@ if st.query_params.get("mode") == "responder":
     if not incident_folders:
 
         st.info(
-            "No incident evidence has been recorded yet."
+            "No incidents have been recorded yet."
         )
 
     else:
 
         st.subheader(
-            "📁 Recorded Incidents"
+            "📁 Incident Evidence"
         )
 
         for incident_folder in incident_folders:
@@ -556,7 +540,7 @@ if st.query_params.get("mode") == "responder":
 
 
 # =========================================================
-# HERO
+# MAIN HERO
 # =========================================================
 
 st.markdown(
@@ -564,7 +548,8 @@ st.markdown(
     <div class="hero">
         <h1>🌸 SafeHer AI</h1>
         <p>
-            AI-assisted personal safety, emergency evidence capture
+            AI-assisted personal safety,
+            emergency evidence capture
             and responder support
         </p>
     </div>
@@ -574,7 +559,7 @@ st.markdown(
 
 
 # =========================================================
-# INCIDENT STATUS
+# STATUS
 # =========================================================
 
 if st.session_state.incident_active:
@@ -606,8 +591,8 @@ st.markdown(
     <div class="card">
         <h2>🚨 Emergency SOS</h2>
         <p>
-            Creates a unique incident and enables emergency
-            evidence capture.
+            Creates a unique incident and enables
+            emergency evidence collection.
         </p>
     </div>
     """,
@@ -618,13 +603,12 @@ if st.button(
     "🚨 ACTIVATE SOS",
     type="primary",
     use_container_width=True,
-    key="activate_sos"
+    key="sos_button"
 ):
 
     if not st.session_state.incident_active:
 
         start_incident()
-
         st.rerun()
 
     else:
@@ -659,8 +643,9 @@ else:
 
     evidence_folder = folder()
 
+
     # =====================================================
-    # SNAPSHOT
+    # SMALL SNAPSHOT
     # =====================================================
 
     st.subheader(
@@ -668,19 +653,21 @@ else:
     )
 
     st.markdown(
-        '<div class="small-camera">',
+        '<div class="snapshot-title">📸 Capture emergency photo</div>',
         unsafe_allow_html=True
     )
 
-    snapshot = st.camera_input(
-        "Take emergency snapshot",
-        key="safeher_snapshot"
+    left_space, camera_col, right_space = st.columns(
+        [1, 2, 1]
     )
 
-    st.markdown(
-        "</div>",
-        unsafe_allow_html=True
-    )
+    with camera_col:
+
+        snapshot = st.camera_input(
+            "Take emergency snapshot",
+            key="snapshot_camera"
+        )
+
 
     if snapshot is not None:
 
@@ -700,12 +687,13 @@ else:
         add_evidence(
             "SNAPSHOT",
             snapshot_file,
-            "Camera snapshot captured during active incident."
+            "Emergency camera snapshot captured during active incident."
         )
 
         st.success(
             "✅ Snapshot saved successfully."
         )
+
 
     # =====================================================
     # LOCATION
@@ -718,13 +706,12 @@ else:
     )
 
     if st.button(
-        "📍 CAPTURE MY LOCATION",
+        "📍  CAPTURE MY LOCATION",
         use_container_width=True,
-        key="capture_location"
+        key="location_button"
     ):
 
         st.session_state.location_requested = True
-
         st.rerun()
 
 
@@ -783,21 +770,21 @@ else:
                     "✅ Location captured successfully."
                 )
 
-                col1, col2 = st.columns(2)
+                c1, c2 = st.columns(2)
 
-                with col1:
+                with c1:
 
                     st.metric(
-                        "Latitude",
+                        "📍 Latitude",
                         str(
                             location_data["latitude"]
                         )
                     )
 
-                with col2:
+                with c2:
 
                     st.metric(
-                        "Longitude",
+                        "📍 Longitude",
                         str(
                             location_data["longitude"]
                         )
@@ -834,7 +821,7 @@ else:
 
                 st.info(
                     "📍 Please allow location permission "
-                    "in your browser, then click "
+                    "in your browser and press "
                     "**CAPTURE MY LOCATION** again."
                 )
 
@@ -860,11 +847,11 @@ else:
     if VIDEO_AVAILABLE:
 
         st.info(
-            "🎥 Click START below to activate "
+            "🎥 Press the START button below to activate "
             "the emergency camera."
         )
 
-        rtc_config = RTCConfiguration(
+        rtc_configuration = RTCConfiguration(
             {
                 "iceServers": [
                     {
@@ -876,7 +863,7 @@ else:
             }
         )
 
-        video = webrtc_streamer(
+        video_context = webrtc_streamer(
             key=(
                 "safeher_video_"
                 + str(
@@ -884,7 +871,7 @@ else:
                 )
             ),
             mode=WebRtcMode.SENDRECV,
-            rtc_configuration=rtc_config,
+            rtc_configuration=rtc_configuration,
             media_stream_constraints={
                 "video": True,
                 "audio": True
@@ -893,7 +880,7 @@ else:
             media_toggle_controls=True
         )
 
-        if video.state.playing:
+        if video_context.state.playing:
 
             st.success(
                 "🔴 Emergency camera is ACTIVE."
@@ -906,16 +893,16 @@ else:
             )
 
         st.caption(
-            "When the browser asks for camera/microphone "
-            "permission, select Allow."
+            "When your browser asks for camera and "
+            "microphone permission, select Allow."
         )
 
     else:
 
         st.error(
             "Video component unavailable. "
-            "Check `streamlit-webrtc` and `av` "
-            "in requirements.txt."
+            "Make sure `streamlit-webrtc` and `av` "
+            "are in requirements.txt."
         )
 
 
@@ -970,12 +957,12 @@ description = st.text_area(
         "Example: Someone has been following me "
         "for the last 10 minutes..."
     ),
-    key="safety_description"
+    key="safety_description_box"
 )
 
 if st.button(
     "🤖 Analyze Safety Situation",
-    key="analyze_safety"
+    key="analyze_button"
 ):
 
     if description.strip():
@@ -1028,11 +1015,10 @@ if st.session_state.incident_active:
 
     if st.button(
         "🛑 End Incident",
-        key="end_incident"
+        key="end_incident_button"
     ):
 
         end_incident()
-
         st.rerun()
 
 
@@ -1053,22 +1039,23 @@ if st.session_state.incident_id:
                 "_manifest.json"
             ),
             mime="application/json",
-            key="download_manifest"
+            key="manifest_download"
         )
 
 
 # =========================================================
-# RESPONDER LINK
+# RESPONDER ACCESS
 # =========================================================
 
 st.divider()
 
-st.subheader(
+st.header(
     "🛡️ Responder Access"
 )
 
-st.caption(
-    "Demo responder dashboard:"
+st.info(
+    "Authorized responders can open the responder dashboard "
+    "using the SafeHer responder link."
 )
 
 st.code(
