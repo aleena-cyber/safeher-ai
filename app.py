@@ -22,44 +22,75 @@ except Exception:
 st.set_page_config(page_title="SafeHer AI", page_icon="🌸", layout="wide")
 
 st.markdown("""
+st.markdown("""
 <style>
-/* ==============================
-   SAFEHER AI LIGHT GIRLY THEME
-   ============================== */
 
+/* SAFEHER BACKGROUND */
 .stApp {
-    background: linear-gradient(135deg, #fff7fb 0%, #f8f3ff 50%, #eef7ff 100%);
+    background: linear-gradient(135deg, #fff7fb, #f8f3ff, #eef7ff) !important;
 }
 
-/* Main content */
 .block-container {
     max-width: 1250px;
     padding-top: 25px;
-    padding-bottom: 50px;
 }
 
-/* Normal text */
-.stMarkdown,
-.stMarkdown p,
-.stMarkdown span {
-    color: #222222;
-}
-
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
+/* TEXT */
+h1, h2, h3, h4, h5, h6,
+p, label, span {
     color: #222222 !important;
 }
 
-/* ==============================
-   STREAMLIT EXPANDERS
-   ============================== */
+/* HERO */
+.hero {
+    padding: 30px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #ff5f9e, #a66cff);
+    color: white !important;
+    box-shadow: 0 12px 35px rgba(166,108,255,.25);
+    margin-bottom: 22px;
+}
 
+.hero h1,
+.hero p {
+    color: white !important;
+}
+
+/* WHITE CARDS */
+.card {
+    background: #ffffff !important;
+    border: 1px solid #eadcf0 !important;
+    border-radius: 20px !important;
+    padding: 20px !important;
+    margin-bottom: 16px !important;
+    color: #222222 !important;
+}
+
+/* INCIDENT */
+.incident {
+    background: #fff0f4 !important;
+    border: 2px solid #ff8cad !important;
+    border-radius: 18px !important;
+    padding: 16px !important;
+    margin-bottom: 18px !important;
+    color: #222222 !important;
+}
+
+/* EVIDENCE */
+.evidence {
+    background: #ffffff !important;
+    border-left: 5px solid #b16cff !important;
+    border-radius: 14px !important;
+    padding: 14px !important;
+    margin-bottom: 12px !important;
+    color: #222222 !important;
+}
+
+/* STREAMLIT EXPANDERS */
 [data-testid="stExpander"] {
     background: #ffffff !important;
-    border: 1px solid #eadcf5 !important;
+    border: 1px solid #eadcf0 !important;
     border-radius: 18px !important;
-    box-shadow: 0 5px 18px rgba(180, 130, 210, 0.12) !important;
-    overflow: hidden !important;
 }
 
 [data-testid="stExpander"] details {
@@ -69,11 +100,6 @@ h1, h2, h3, h4, h5, h6 {
 [data-testid="stExpander"] summary {
     background: #ffffff !important;
     color: #333333 !important;
-    border-radius: 18px !important;
-}
-
-[data-testid="stExpander"] summary:hover {
-    background: #fff4fa !important;
 }
 
 [data-testid="stExpander"] summary p,
@@ -81,125 +107,43 @@ h1, h2, h3, h4, h5, h6 {
     color: #333333 !important;
 }
 
-[data-testid="stExpander"] svg {
-    color: #9b70c9 !important;
-    fill: #9b70c9 !important;
-}
-
-/* Text inside expander */
-[data-testid="stExpander"] [data-testid="stMarkdownContainer"],
-[data-testid="stExpander"] p,
-[data-testid="stExpander"] span {
-    color: #333333 !important;
-}
-
-/* ==============================
-   BUTTONS
-   ============================== */
-
+/* BUTTONS */
 .stButton > button {
     background: linear-gradient(135deg, #ff6fa5, #a66cff) !important;
-    color: #ffffff !important;
+    color: white !important;
     border: none !important;
     border-radius: 14px !important;
-    padding: 12px 24px !important;
     font-weight: 700 !important;
-    box-shadow: 0 5px 15px rgba(166, 108, 255, 0.20) !important;
-}
-
-.stButton > button:hover {
-    background: linear-gradient(135deg, #ff5c98, #9258ed) !important;
-    color: #ffffff !important;
-    border: none !important;
+    padding: 12px 20px !important;
 }
 
 .stButton > button p,
 .stButton > button span {
-    color: #ffffff !important;
-}
-
-/* ==============================
-   INPUTS
-   ============================== */
-
-.stTextInput input,
-.stTextArea textarea,
-.stSelectbox div[data-baseweb="select"] {
-    background: #ffffff !important;
-    color: #222222 !important;
-    border-radius: 12px !important;
-}
-
-/* Input labels */
-.stTextInput label,
-.stTextArea label,
-.stSelectbox label {
-    color: #333333 !important;
-}
-
-/* ==============================
-   CARDS
-   ============================== */
-
-.hero {
-    padding: 30px;
-    border-radius: 28px;
-    background: linear-gradient(135deg, #ff5f9e, #a66cff);
-    color: white;
-    box-shadow: 0 12px 35px rgba(166,108,255,.25);
-}
-
-.hero h1,
-.hero p,
-.hero span {
     color: white !important;
 }
 
-.card {
-    background: #ffffff;
-    border: 1px solid #eadcf0;
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 16px;
-    color: #222222;
-    box-shadow: 0 5px 18px rgba(180,130,210,.10);
+/* TEXT AREA */
+.stTextArea textarea {
+    background: white !important;
+    color: #222222 !important;
+    border: 1px solid #e0cfe8 !important;
+    border-radius: 12px !important;
 }
 
-.incident {
-    background: #fff0f4;
-    border: 2px solid #ff8cad;
-    border-radius: 18px;
-    padding: 16px;
-    margin-bottom: 18px;
-    color: #222222;
+/* INPUT PLACEHOLDER */
+.stTextArea textarea::placeholder {
+    color: #777777 !important;
 }
 
-.evidence {
-    background: #ffffff;
-    border-left: 5px solid #b16cff;
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 12px;
-    color: #222222;
-}
-
-/* ==============================
-   SUCCESS / INFO / WARNING BOXES
-   ============================== */
-
-[data-testid="stAlert"] {
-    border-radius: 15px !important;
-}
-
-/* ==============================
-   FOOTER
-   ============================== */
-
+/* FOOTER */
 .footer {
     text-align: center;
-    color: #555555;
+    color: #555555 !important;
     padding: 30px;
 }
+
+</style>
+""", unsafe_allow_html=True)
 </style>
 """, unsafe_allow_html=True)
 
